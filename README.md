@@ -31,10 +31,16 @@ The system consists of the following parts:
 
 1. **Install the Grasshopper MCP Component**
 
-   Copy the `GH_MCP.gha` file to the Grasshopper components folder:
+   **Method 1: Download the pre-compiled GH_MCP.gha file (Recommended)**
+   
+   Download the [GH_MCP.gha](https://github.com/alfredatnycu/grasshopper-mcp/raw/master/releases/GH_MCP.gha) file directly from the GitHub repository and copy it to the Grasshopper components folder:
    ```
    %APPDATA%\Grasshopper\Libraries\
    ```
+
+   **Method 2: Build from source**
+   
+   If you prefer to build from source, clone the repository and build the C# project using Visual Studio.
 
 2. **Install the Python MCP Bridge Server**
 
@@ -131,6 +137,8 @@ grasshopper-mcp/
 │   │   ├── Resources/        # Resource files
 │   │   └── Utils/            # Utility classes
 │   └── GH_MCP.sln            # Visual Studio solution
+├── releases/                 # Pre-compiled binaries
+│   └── GH_MCP.gha           # Compiled Grasshopper component
 ├── setup.py                  # Python package configuration
 └── README.md                 # This file
 ```
