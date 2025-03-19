@@ -1,4 +1,9 @@
 from setuptools import setup, find_packages
+import os
+
+# 讀取 README.md 作為長描述
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name="grasshopper-mcp",
@@ -18,6 +23,8 @@ setup(
     author="Alfred Chen",
     author_email="yanlin.hs12@nycu.edu.tw",
     description="Grasshopper MCP Bridge Server",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     keywords="grasshopper, mcp, bridge, server",
     url="https://github.com/alfredatnycu/grasshopper-mcp",
     classifiers=[
