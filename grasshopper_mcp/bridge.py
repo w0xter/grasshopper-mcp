@@ -3,7 +3,7 @@ import json
 import os
 import sys
 import traceback
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 # 使用 MCP 服務器
 from mcp.server.fastmcp import FastMCP
@@ -197,6 +197,104 @@ def get_available_patterns(query: str):
     
     return send_to_grasshopper("get_available_patterns", params)
 
+@server.tool("get_component_info")
+def get_component_info(component_id: str):
+    """
+    Get detailed information about a specific component
+    
+    Args:
+        component_id: ID of the component to get information about
+    
+    Returns:
+        Detailed information about the component, including inputs, outputs, and current values
+    """
+    params = {
+        "componentId": component_id
+    }
+    
+    return send_to_grasshopper("get_component_info", params)
+
+@server.tool("get_all_components")
+def get_all_components():
+    """
+    Get a list of all components in the current document
+    
+    Returns:
+        List of all components in the document with their IDs, types, and positions
+    """
+    return send_to_grasshopper("get_all_components")
+
+@server.tool("get_connections")
+def get_connections():
+    """
+    Get a list of all connections between components in the current document
+    
+    Returns:
+        List of all connections between components
+    """
+    return send_to_grasshopper("get_connections")
+
+@server.tool("search_components")
+def search_components(query: str):
+    """
+    Search for components by name or category
+    
+    Args:
+        query: Search query
+    
+    Returns:
+        List of components matching the search query
+    """
+    params = {
+        "query": query
+    }
+    
+    return send_to_grasshopper("search_components", params)
+
+@server.tool("get_component_parameters")
+def get_component_parameters(component_type: str):
+    """
+    Get a list of parameters for a specific component type
+    
+    Args:
+        component_type: Type of component to get parameters for
+    
+    Returns:
+        List of input and output parameters for the component type
+    """
+    params = {
+        "componentType": component_type
+    }
+    
+    return send_to_grasshopper("get_component_parameters", params)
+
+@server.tool("validate_connection")
+def validate_connection(source_id: str, target_id: str, source_param: str = None, target_param: str = None):
+    """
+    Validate if a connection between two components is possible
+    
+    Args:
+        source_id: ID of the source component (output)
+        target_id: ID of the target component (input)
+        source_param: Name of the source parameter (optional)
+        target_param: Name of the target parameter (optional)
+    
+    Returns:
+        Whether the connection is valid and any potential issues
+    """
+    params = {
+        "sourceId": source_id,
+        "targetId": target_id
+    }
+    
+    if source_param is not None:
+        params["sourceParam"] = source_param
+        
+    if target_param is not None:
+        params["targetParam"] = target_param
+    
+    return send_to_grasshopper("validate_connection", params)
+
 # 註冊 MCP 資源
 @server.resource("grasshopper://status")
 def get_grasshopper_status():
@@ -206,9 +304,28 @@ def get_grasshopper_status():
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((GRASSHOPPER_HOST, GRASSHOPPER_PORT))
         client.close()
-        return {"status": "connected"}
-    except:
-        return {"status": "disconnected"}
+        
+        # 獲取文檔信息
+        doc_info = send_to_grasshopper("get_document_info")
+        
+        # 獲取所有組件
+        components_info = send_to_grasshopper("get_all_components")
+        
+        # 獲取所有連接
+        connections_info = send_to_grasshopper("get_connections")
+        
+        return {
+            "status": "connected",
+            "document": doc_info.get("document", {}),
+            "components": components_info.get("components", []),
+            "connections": connections_info.get("connections", []),
+            "lastUpdated": components_info.get("timestamp", "")
+        }
+    except Exception as e:
+        return {
+            "status": "disconnected",
+            "error": str(e)
+        }
 
 @server.resource("grasshopper://component_guide")
 def get_component_guide():
@@ -252,6 +369,81 @@ def get_component_guide():
                 "outputs": [
                     {"name": "Plane", "type": "Plane", "description": "XY plane"}
                 ]
+            },
+            {
+                "name": "Number Slider",
+                "category": "Params",
+                "description": "Creates a slider for numeric input",
+                "inputs": [],
+                "outputs": [
+                    {"name": "N", "type": "Number"}
+                ],
+                "settings": {
+                    "min": 0,
+                    "max": 10,
+                    "default": 5,
+                    "rounding": 0.1
+                }
+            },
+            {
+                "name": "Panel",
+                "category": "Params",
+                "description": "Displays text or numeric data",
+                "inputs": [
+                    {"name": "Input", "type": "Any"}
+                ],
+                "outputs": []
+            },
+            {
+                "name": "Math",
+                "category": "Maths",
+                "description": "Performs mathematical operations",
+                "inputs": [
+                    {"name": "A", "type": "Number"},
+                    {"name": "B", "type": "Number"}
+                ],
+                "outputs": [
+                    {"name": "Result", "type": "Number"}
+                ],
+                "operations": ["Addition", "Subtraction", "Multiplication", "Division", "Power", "Modulo"]
+            },
+            {
+                "name": "Construct Point",
+                "category": "Vector",
+                "description": "Constructs a point from X, Y, Z coordinates",
+                "inputs": [
+                    {"name": "X", "type": "Number"},
+                    {"name": "Y", "type": "Number"},
+                    {"name": "Z", "type": "Number"}
+                ],
+                "outputs": [
+                    {"name": "Pt", "type": "Point"}
+                ]
+            },
+            {
+                "name": "Line",
+                "category": "Curve",
+                "description": "Creates a line between two points",
+                "inputs": [
+                    {"name": "Start", "type": "Point"},
+                    {"name": "End", "type": "Point"}
+                ],
+                "outputs": [
+                    {"name": "L", "type": "Line"}
+                ]
+            },
+            {
+                "name": "Extrude",
+                "category": "Surface",
+                "description": "Extrudes a curve to create a surface or a solid",
+                "inputs": [
+                    {"name": "Base", "type": "Curve"},
+                    {"name": "Direction", "type": "Vector"},
+                    {"name": "Height", "type": "Number"}
+                ],
+                "outputs": [
+                    {"name": "Brep", "type": "Brep"}
+                ]
             }
         ],
         "connectionRules": [
@@ -269,19 +461,259 @@ def get_component_guide():
                 "from": "XY Plane",
                 "to": "Circle.Plane",
                 "description": "Connect an XY Plane to the plane input of a circle (recommended)"
+            },
+            {
+                "from": "Number",
+                "to": "Math.A",
+                "description": "Connect a number to the first input of a Math component"
+            },
+            {
+                "from": "Number",
+                "to": "Math.B",
+                "description": "Connect a number to the second input of a Math component"
+            },
+            {
+                "from": "Number",
+                "to": "Construct Point.X",
+                "description": "Connect a number to the X input of a Construct Point component"
+            },
+            {
+                "from": "Number",
+                "to": "Construct Point.Y",
+                "description": "Connect a number to the Y input of a Construct Point component"
+            },
+            {
+                "from": "Number",
+                "to": "Construct Point.Z",
+                "description": "Connect a number to the Z input of a Construct Point component"
+            },
+            {
+                "from": "Point",
+                "to": "Line.Start",
+                "description": "Connect a point to the start input of a Line component"
+            },
+            {
+                "from": "Point",
+                "to": "Line.End",
+                "description": "Connect a point to the end input of a Line component"
+            },
+            {
+                "from": "Circle",
+                "to": "Extrude.Base",
+                "description": "Connect a circle to the base input of an Extrude component"
+            },
+            {
+                "from": "Number",
+                "to": "Extrude.Height",
+                "description": "Connect a number to the height input of an Extrude component"
             }
         ],
         "commonIssues": [
             "Using Point component instead of XY Plane for inputs that require planes",
             "Not specifying parameter names when connecting components",
-            "Using incorrect GUIDs for Circle components"
+            "Using incorrect component names (e.g., 'addition' instead of 'Math' with Addition operation)",
+            "Trying to connect incompatible data types",
+            "Not providing all required inputs for a component",
+            "Using incorrect parameter names (e.g., 'A' and 'B' for Math component instead of the actual parameter names)",
+            "Not checking if a connection was successful before proceeding"
         ],
         "tips": [
             "Always use XY Plane component for plane inputs",
             "Specify parameter names when connecting components",
-            "For Circle components, make sure to use the correct GUID",
+            "For Circle components, make sure to use the correct inputs (Plane and Radius)",
             "Test simple connections before creating complex geometry",
-            "Avoid using components that require selection from Rhino"
+            "Avoid using components that require selection from Rhino",
+            "Use get_component_info to check the actual parameter names of a component",
+            "Use get_connections to verify if connections were established correctly",
+            "Use search_components to find the correct component name before adding it",
+            "Use validate_connection to check if a connection is possible before attempting it"
+        ]
+    }
+
+@server.resource("grasshopper://component_library")
+def get_component_library():
+    """Get a comprehensive library of Grasshopper components"""
+    # 這個資源提供了一個更全面的組件庫，包括常用組件的詳細信息
+    return {
+        "categories": [
+            {
+                "name": "Params",
+                "components": [
+                    {
+                        "name": "Point",
+                        "fullName": "Point Parameter",
+                        "description": "Creates a point parameter",
+                        "inputs": [
+                            {"name": "X", "type": "Number", "description": "X coordinate"},
+                            {"name": "Y", "type": "Number", "description": "Y coordinate"},
+                            {"name": "Z", "type": "Number", "description": "Z coordinate"}
+                        ],
+                        "outputs": [
+                            {"name": "Pt", "type": "Point", "description": "Point output"}
+                        ]
+                    },
+                    {
+                        "name": "Number Slider",
+                        "fullName": "Number Slider",
+                        "description": "Creates a slider for numeric input",
+                        "inputs": [],
+                        "outputs": [
+                            {"name": "N", "type": "Number", "description": "Number output"}
+                        ],
+                        "settings": {
+                            "min": 0,
+                            "max": 10,
+                            "default": 5,
+                            "rounding": 0.1
+                        }
+                    },
+                    {
+                        "name": "Panel",
+                        "fullName": "Panel",
+                        "description": "Displays text or numeric data",
+                        "inputs": [
+                            {"name": "Input", "type": "Any", "description": "Any input data"}
+                        ],
+                        "outputs": []
+                    }
+                ]
+            },
+            {
+                "name": "Maths",
+                "components": [
+                    {
+                        "name": "Math",
+                        "fullName": "Mathematics",
+                        "description": "Performs mathematical operations",
+                        "inputs": [
+                            {"name": "A", "type": "Number", "description": "First number"},
+                            {"name": "B", "type": "Number", "description": "Second number"}
+                        ],
+                        "outputs": [
+                            {"name": "Result", "type": "Number", "description": "Result of the operation"}
+                        ],
+                        "operations": ["Addition", "Subtraction", "Multiplication", "Division", "Power", "Modulo"]
+                    }
+                ]
+            },
+            {
+                "name": "Vector",
+                "components": [
+                    {
+                        "name": "XY Plane",
+                        "fullName": "XY Plane",
+                        "description": "Creates an XY plane at the world origin or at a specified point",
+                        "inputs": [
+                            {"name": "Origin", "type": "Point", "description": "Origin point", "optional": True}
+                        ],
+                        "outputs": [
+                            {"name": "Plane", "type": "Plane", "description": "XY plane"}
+                        ]
+                    },
+                    {
+                        "name": "Construct Point",
+                        "fullName": "Construct Point",
+                        "description": "Constructs a point from X, Y, Z coordinates",
+                        "inputs": [
+                            {"name": "X", "type": "Number", "description": "X coordinate"},
+                            {"name": "Y", "type": "Number", "description": "Y coordinate"},
+                            {"name": "Z", "type": "Number", "description": "Z coordinate"}
+                        ],
+                        "outputs": [
+                            {"name": "Pt", "type": "Point", "description": "Constructed point"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Curve",
+                "components": [
+                    {
+                        "name": "Circle",
+                        "fullName": "Circle",
+                        "description": "Creates a circle",
+                        "inputs": [
+                            {"name": "Plane", "type": "Plane", "description": "Base plane for the circle"},
+                            {"name": "Radius", "type": "Number", "description": "Circle radius"}
+                        ],
+                        "outputs": [
+                            {"name": "C", "type": "Circle", "description": "Circle output"}
+                        ]
+                    },
+                    {
+                        "name": "Line",
+                        "fullName": "Line",
+                        "description": "Creates a line between two points",
+                        "inputs": [
+                            {"name": "Start", "type": "Point", "description": "Start point"},
+                            {"name": "End", "type": "Point", "description": "End point"}
+                        ],
+                        "outputs": [
+                            {"name": "L", "type": "Line", "description": "Line output"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Surface",
+                "components": [
+                    {
+                        "name": "Extrude",
+                        "fullName": "Extrude",
+                        "description": "Extrudes a curve to create a surface or a solid",
+                        "inputs": [
+                            {"name": "Base", "type": "Curve", "description": "Base curve to extrude"},
+                            {"name": "Direction", "type": "Vector", "description": "Direction of extrusion", "optional": True},
+                            {"name": "Height", "type": "Number", "description": "Height of extrusion"}
+                        ],
+                        "outputs": [
+                            {"name": "Brep", "type": "Brep", "description": "Extruded brep"}
+                        ]
+                    }
+                ]
+            }
+        ],
+        "dataTypes": [
+            {
+                "name": "Number",
+                "description": "A numeric value",
+                "compatibleWith": ["Number", "Integer", "Double"]
+            },
+            {
+                "name": "Point",
+                "description": "A 3D point in space",
+                "compatibleWith": ["Point3d", "Point"]
+            },
+            {
+                "name": "Vector",
+                "description": "A 3D vector",
+                "compatibleWith": ["Vector3d", "Vector"]
+            },
+            {
+                "name": "Plane",
+                "description": "A plane in 3D space",
+                "compatibleWith": ["Plane"]
+            },
+            {
+                "name": "Circle",
+                "description": "A circle curve",
+                "compatibleWith": ["Circle", "Curve"]
+            },
+            {
+                "name": "Line",
+                "description": "A line segment",
+                "compatibleWith": ["Line", "Curve"]
+            },
+            {
+                "name": "Curve",
+                "description": "A curve object",
+                "compatibleWith": ["Curve", "Circle", "Line", "Arc", "Polyline"]
+            },
+            {
+                "name": "Brep",
+                "description": "A boundary representation object",
+                "compatibleWith": ["Brep", "Surface", "Solid"]
+            }
         ]
     }
 
