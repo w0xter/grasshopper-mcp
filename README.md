@@ -45,7 +45,7 @@ Grasshopper MCP Bridge 是一個連接 Grasshopper 和 Claude Desktop 的橋接�
 
    或從源代碼安裝：
    ```
-   git clone https://github.com/yourusername/grasshopper-mcp.git
+   git clone https://github.com/alfredatnycu/grasshopper-mcp.git
    cd grasshopper-mcp
    pip install -e .
    ```
