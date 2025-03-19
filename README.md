@@ -82,89 +82,110 @@ The system consists of the following parts:
 
 1. **Start Rhino and Grasshopper**
 
-2. **Start the Python MCP Bridge Server**
+   Launch Rhino and open Grasshopper.
 
-   In a terminal, run:
+2. **Add the GH_MCP Component to Your Canvas**
+
+   Find the GH_MCP component in the Grasshopper component panel and add it to your canvas.
+
+3. **Start the Python MCP Bridge Server**
+
+   Open a terminal and run:
    ```
-   grasshopper-mcp
+   python -m grasshopper_mcp.bridge
    ```
+   
+   > **Note**: The command `grasshopper-mcp` might not work directly due to Python script path issues. Using `python -m grasshopper_mcp.bridge` is the recommended and more reliable method.
 
-3. **Add the MCP Server to Claude Desktop**
+4. **Connect Claude Desktop to the MCP Bridge**
 
-   In Claude Desktop's settings, add the following MCP server configuration:
+   **Method 1: Manual Connection**
+   
+   In Claude Desktop, connect to the MCP Bridge server using the following settings:
+   - Protocol: MCP
+   - Host: localhost
+   - Port: 8080
+
+   **Method 2: Configure Claude Desktop to Auto-Start the Bridge**
+   
+   You can configure Claude Desktop to automatically start the MCP Bridge server by modifying its configuration:
+   
    ```json
-   {
-     "mcpServers": {
-       "grasshopper": {
-         "command": "grasshopper-mcp",
-         "args": []
-       }
-     }
+   "grasshopper": {
+     "command": "python",
+     "args": ["-m", "grasshopper_mcp.bridge"]
    }
    ```
+   
+   This configuration tells Claude Desktop to use the command `python -m grasshopper_mcp.bridge` to start the MCP server.
 
-4. **Use Claude Desktop to Interact with Grasshopper**
+5. **Start Using Grasshopper with Claude Desktop**
 
-   Now you can use Claude Desktop to send commands to Grasshopper, such as:
-   - "Create a 3D Voronoi in Grasshopper"
-   - "Add a circle component"
-   - "Connect the point and circle components"
+   You can now use Claude Desktop to control Grasshopper through natural language commands.
 
-## Available Tools
+## Example Commands
 
-- `add_component`: Adds a component to the Grasshopper canvas
-- `connect_components`: Connects two components
-- `create_pattern`: Creates a component pattern based on a high-level description
-- `get_available_patterns`: Gets a list of available patterns
-- `clear_document`: Clears the Grasshopper document
-- `save_document`: Saves the Grasshopper document
-- `load_document`: Loads a Grasshopper document
-- `get_document_info`: Gets document information
+Here are some example commands you can use with Claude Desktop:
 
-## Developer Guide
+- "Create a circle with radius 5 at point (0,0,0)"
+- "Connect the circle to a extrude component with a height of 10"
+- "Create a grid of points with 5 rows and 5 columns"
+- "Apply a random rotation to all selected objects"
+
+## Troubleshooting
+
+If you encounter issues, check the following:
+
+1. **GH_MCP Component Not Loading**
+   - Ensure the .gha file is in the correct location
+   - In Grasshopper, go to File > Preferences > Libraries and click "Unblock" to unblock new components
+   - Restart Rhino and Grasshopper
+
+2. **Bridge Server Won't Start**
+   - If `grasshopper-mcp` command doesn't work, use `python -m grasshopper_mcp.bridge` instead
+   - Ensure all required Python dependencies are installed
+   - Check if port 8080 is already in use by another application
+
+3. **Claude Desktop Can't Connect**
+   - Ensure the bridge server is running
+   - Verify you're using the correct connection settings (localhost:8080)
+   - Check the console output of the bridge server for any error messages
+
+4. **Commands Not Executing**
+   - Verify the GH_MCP component is on your Grasshopper canvas
+   - Check the bridge server console for error messages
+   - Ensure Claude Desktop is properly connected to the bridge server
+
+## Development
 
 ### Project Structure
 
 ```
 grasshopper-mcp/
-├── grasshopper_mcp/          # Python package
+├── grasshopper_mcp/       # Python bridge server
 │   ├── __init__.py
-│   └── bridge.py             # MCP bridge server
-├── GH_MCP/                   # Grasshopper component source code
-│   ├── GH_MCP/
-│   │   ├── Commands/         # Command handlers
-│   │   ├── Models/           # Data models
-│   │   ├── Resources/        # Resource files
-│   │   └── Utils/            # Utility classes
-│   └── GH_MCP.sln            # Visual Studio solution
-├── releases/                 # Pre-compiled binaries
-│   └── GH_MCP.gha           # Compiled Grasshopper component
-├── setup.py                  # Python package configuration
-└── README.md                 # This file
+│   └── bridge.py          # Main bridge server implementation
+├── GH_MCP/                # Grasshopper component (C#)
+│   └── ...
+├── releases/              # Pre-compiled binaries
+│   └── GH_MCP.gha         # Compiled Grasshopper component
+├── setup.py               # Python package setup
+└── README.md              # This file
 ```
 
-### Adding New Features
+### Contributing
 
-1. **Add a New Grasshopper Command**
-
-   Create a new command handler in the `GH_MCP/Commands/` directory and register it in `GrasshopperCommandRegistry.cs`.
-
-2. **Add a New MCP Tool**
-
-   In `grasshopper_mcp/bridge.py`, use the `@server.tool` decorator to add a new tool function.
-
-3. **Extend the Component Knowledge Base**
-
-   Add new components, patterns, or intents to the `ComponentKnowledgeBase.json` file.
-
-## Contribution Guide
-
-Contributions are welcome! Before submitting code, please ensure:
-
-1. Code follows the project's coding style
-2. Appropriate tests are added
-3. Documentation is updated
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Thanks to the Rhino and Grasshopper community for their excellent tools
+- Thanks to Anthropic for Claude Desktop and the MCP protocol
+
+## Contact
+
+For questions or support, please open an issue on the GitHub repository.
