@@ -38,16 +38,38 @@ Grasshopper MCP Bridge 是一個連接 Grasshopper 和 Claude Desktop 的橋接�
 
 2. **安裝 Python MCP 橋接服務器**
 
-   使用 pip 安裝：
+   **方法 1: 從 PyPI 安裝 (推薦)**
+   
+   最簡單的方法是使用 pip 從 PyPI 直接安裝：
    ```
    pip install grasshopper-mcp
    ```
-
-   或從源代碼安裝：
+   
+   **方法 2: 從 GitHub 安裝**
+   
+   您也可以從 GitHub 安裝最新版本：
+   ```
+   pip install git+https://github.com/alfredatnycu/grasshopper-mcp.git
+   ```
+   
+   **方法 3: 從源代碼安裝**
+   
+   如果您需要修改代碼或開發新功能，可以克隆倉庫並安裝：
    ```
    git clone https://github.com/alfredatnycu/grasshopper-mcp.git
    cd grasshopper-mcp
    pip install -e .
+   ```
+
+   **安裝特定版本**
+   
+   如果您需要安裝特定版本，可以使用：
+   ```
+   pip install grasshopper-mcp==0.1.0
+   ```
+   或從 GitHub 的特定標籤安裝：
+   ```
+   pip install git+https://github.com/alfredatnycu/grasshopper-mcp.git@v0.1.0
    ```
 
 ## 使用方法
