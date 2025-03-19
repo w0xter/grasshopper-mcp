@@ -1,91 +1,91 @@
 # Grasshopper MCP Bridge
 
-Grasshopper MCP Bridge 是一個連接 Grasshopper 和 Claude Desktop 的橋接服務器，使用 Model Context Protocol (MCP) 標準協議。
+Grasshopper MCP Bridge is a bridging server that connects Grasshopper and Claude Desktop using the Model Context Protocol (MCP) standard.
 
-## 功能特點
+## Features
 
-- 通過 MCP 協議連接 Grasshopper 和 Claude Desktop
-- 提供直觀的工具函數，用於創建和連接 Grasshopper 組件
-- 支持高層次意圖識別，可以從簡單描述自動創建複雜的組件模式
-- 包含組件知識庫，了解常用組件的參數和連接規則
-- 提供組件指南資源，幫助 Claude Desktop 正確連接組件
+- Connects Grasshopper and Claude Desktop through the MCP protocol
+- Provides intuitive tool functions for creating and connecting Grasshopper components
+- Supports high-level intent recognition, automatically creating complex component patterns from simple descriptions
+- Includes a component knowledge base that understands parameters and connection rules for common components
+- Provides component guidance resources to help Claude Desktop correctly connect components
 
-## 系統架構
+## System Architecture
 
-該系統由以下部分組成：
+The system consists of the following parts:
 
-1. **Grasshopper MCP 組件 (GH_MCP.gha)**：安裝在 Grasshopper 中的插件，提供 TCP 服務器接收命令
-2. **Python MCP 橋接服務器**：連接 Claude Desktop 和 Grasshopper MCP 組件的橋接服務器
-3. **組件知識庫**：包含組件信息、模式和意圖的 JSON 文件
+1. **Grasshopper MCP Component (GH_MCP.gha)**: A plugin installed in Grasshopper that provides a TCP server to receive commands
+2. **Python MCP Bridge Server**: A bridge server that connects Claude Desktop and the Grasshopper MCP component
+3. **Component Knowledge Base**: JSON files containing component information, patterns, and intents
 
-## 安裝說明
+## Installation Instructions
 
-### 前提條件
+### Prerequisites
 
-- Rhino 7 或更高版本
+- Rhino 7 or higher
 - Grasshopper
-- Python 3.8 或更高版本
+- Python 3.8 or higher
 - Claude Desktop
 
-### 安裝步驟
+### Installation Steps
 
-1. **安裝 Grasshopper MCP 組件**
+1. **Install the Grasshopper MCP Component**
 
-   將 `GH_MCP.gha` 文件複製到 Grasshopper 組件文件夾：
+   Copy the `GH_MCP.gha` file to the Grasshopper components folder:
    ```
    %APPDATA%\Grasshopper\Libraries\
    ```
 
-2. **安裝 Python MCP 橋接服務器**
+2. **Install the Python MCP Bridge Server**
 
-   **方法 1: 從 PyPI 安裝 (推薦)**
+   **Method 1: Install from PyPI (Recommended)**
    
-   最簡單的方法是使用 pip 從 PyPI 直接安裝：
+   The simplest method is to install directly from PyPI using pip:
    ```
    pip install grasshopper-mcp
    ```
    
-   **方法 2: 從 GitHub 安裝**
+   **Method 2: Install from GitHub**
    
-   您也可以從 GitHub 安裝最新版本：
+   You can also install the latest version from GitHub:
    ```
    pip install git+https://github.com/alfredatnycu/grasshopper-mcp.git
    ```
    
-   **方法 3: 從源代碼安裝**
+   **Method 3: Install from Source Code**
    
-   如果您需要修改代碼或開發新功能，可以克隆倉庫並安裝：
+   If you need to modify the code or develop new features, you can clone the repository and install:
    ```
    git clone https://github.com/alfredatnycu/grasshopper-mcp.git
    cd grasshopper-mcp
    pip install -e .
    ```
 
-   **安裝特定版本**
+   **Install a Specific Version**
    
-   如果您需要安裝特定版本，可以使用：
+   If you need to install a specific version, you can use:
    ```
    pip install grasshopper-mcp==0.1.0
    ```
-   或從 GitHub 的特定標籤安裝：
+   Or install from a specific GitHub tag:
    ```
    pip install git+https://github.com/alfredatnycu/grasshopper-mcp.git@v0.1.0
    ```
 
-## 使用方法
+## Usage
 
-1. **啟動 Rhino 和 Grasshopper**
+1. **Start Rhino and Grasshopper**
 
-2. **啟動 MCP 橋接服務器**
+2. **Start the Python MCP Bridge Server**
 
-   在命令行中運行：
+   In a terminal, run:
    ```
    grasshopper-mcp
    ```
 
-3. **在 Claude Desktop 中添加 MCP 服務器**
+3. **Add the MCP Server to Claude Desktop**
 
-   在 Claude Desktop 的設置中添加以下 MCP 服務器配置：
+   In Claude Desktop's settings, add the following MCP server configuration:
    ```json
    {
      "mcpServers": {
@@ -97,66 +97,66 @@ Grasshopper MCP Bridge 是一個連接 Grasshopper 和 Claude Desktop 的橋接�
    }
    ```
 
-4. **使用 Claude Desktop 與 Grasshopper 交互**
+4. **Use Claude Desktop to Interact with Grasshopper**
 
-   現在您可以使用 Claude Desktop 向 Grasshopper 發送命令，例如：
-   - "在 Grasshopper 中創建一個 3D Voronoi"
-   - "添加一個圓形組件"
-   - "連接點和圓形組件"
+   Now you can use Claude Desktop to send commands to Grasshopper, such as:
+   - "Create a 3D Voronoi in Grasshopper"
+   - "Add a circle component"
+   - "Connect the point and circle components"
 
-## 可用工具
+## Available Tools
 
-- `add_component`：添加組件到 Grasshopper 畫布
-- `connect_components`：連接兩個組件
-- `create_pattern`：根據高層次描述創建組件模式
-- `get_available_patterns`：獲取可用的模式列表
-- `clear_document`：清空 Grasshopper 文檔
-- `save_document`：保存 Grasshopper 文檔
-- `load_document`：加載 Grasshopper 文檔
-- `get_document_info`：獲取文檔信息
+- `add_component`: Adds a component to the Grasshopper canvas
+- `connect_components`: Connects two components
+- `create_pattern`: Creates a component pattern based on a high-level description
+- `get_available_patterns`: Gets a list of available patterns
+- `clear_document`: Clears the Grasshopper document
+- `save_document`: Saves the Grasshopper document
+- `load_document`: Loads a Grasshopper document
+- `get_document_info`: Gets document information
 
-## 開發者指南
+## Developer Guide
 
-### 項目結構
+### Project Structure
 
 ```
 grasshopper-mcp/
-├── grasshopper_mcp/          # Python 包
+├── grasshopper_mcp/          # Python package
 │   ├── __init__.py
-│   └── bridge.py             # MCP 橋接服務器
-├── GH_MCP/                   # Grasshopper 組件源代碼
+│   └── bridge.py             # MCP bridge server
+├── GH_MCP/                   # Grasshopper component source code
 │   ├── GH_MCP/
-│   │   ├── Commands/         # 命令處理器
-│   │   ├── Models/           # 數據模型
-│   │   ├── Resources/        # 資源文件
-│   │   └── Utils/            # 工具類
-│   └── GH_MCP.sln            # Visual Studio 解決方案
-├── setup.py                  # Python 包配置
-└── README.md                 # 說明文檔
+│   │   ├── Commands/         # Command handlers
+│   │   ├── Models/           # Data models
+│   │   ├── Resources/        # Resource files
+│   │   └── Utils/            # Utility classes
+│   └── GH_MCP.sln            # Visual Studio solution
+├── setup.py                  # Python package configuration
+└── README.md                 # This file
 ```
 
-### 添加新功能
+### Adding New Features
 
-1. **添加新的 Grasshopper 命令**
+1. **Add a New Grasshopper Command**
 
-   在 `GH_MCP/Commands/` 目錄中創建新的命令處理器，並在 `GrasshopperCommandRegistry.cs` 中註冊。
+   Create a new command handler in the `GH_MCP/Commands/` directory and register it in `GrasshopperCommandRegistry.cs`.
 
-2. **添加新的 MCP 工具**
+2. **Add a New MCP Tool**
 
-   在 `grasshopper_mcp/bridge.py` 中使用 `@server.tool` 裝飾器添加新的工具函數。
+   In `grasshopper_mcp/bridge.py`, use the `@server.tool` decorator to add a new tool function.
 
-3. **擴展組件知識庫**
+3. **Extend the Component Knowledge Base**
 
-   在 `ComponentKnowledgeBase.json` 中添加新的組件、模式或意圖。
+   Add new components, patterns, or intents to the `ComponentKnowledgeBase.json` file.
 
-## 貢獻指南
+## Contribution Guide
 
-歡迎提交 Pull Request 或 Issue 來改進這個項目。在提交代碼前，請確保：
+Contributions are welcome! Before submitting code, please ensure:
 
-1. 代碼符合項目的編碼風格
-2. 添加了適當的測試
-3. 更新了文檔
+1. Code follows the project's coding style
+2. Appropriate tests are added
+3. Documentation is updated
 
-## 許可證
+## License
 
-MIT 許可證
+MIT License
