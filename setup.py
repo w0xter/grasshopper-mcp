@@ -19,7 +19,7 @@ setup(
     author_email="yanlin.hs12@nycu.edu.tw",
     description="Grasshopper MCP Bridge Server",
     keywords="grasshopper, mcp, bridge, server",
-    url="https://github.com/yourusername/grasshopper-mcp",
+    url="https://github.com/alfredatnycu/grasshopper-mcp",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
