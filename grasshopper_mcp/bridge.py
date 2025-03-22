@@ -78,6 +78,27 @@ def add_component(component_type: str, x: float, y: float):
     Returns:
         Result of adding the component
     """
+    # 處理常見的組件名稱混淆問題
+    component_mapping = {
+        # Number Slider 的各種可能輸入方式
+        "number slider": "Number Slider",
+        "numeric slider": "Number Slider",
+        "num slider": "Number Slider",
+        "slider": "Number Slider",  # 當只提到 slider 且上下文是數值時，預設為 Number Slider
+        
+        # 其他組件的標準化名稱
+        "md slider": "MD Slider",
+        "multidimensional slider": "MD Slider",
+        "multi-dimensional slider": "MD Slider",
+        "graph mapper": "Graph Mapper"
+    }
+    
+    # 檢查並修正組件類型
+    normalized_type = component_type.lower()
+    if normalized_type in component_mapping:
+        component_type = component_mapping[normalized_type]
+        print(f"Component type normalized from '{component_type}' to '{component_mapping[normalized_type]}'", file=sys.stderr)
+    
     params = {
         "type": component_type,
         "x": x,
@@ -300,31 +321,54 @@ def validate_connection(source_id: str, target_id: str, source_param: str = None
 def get_grasshopper_status():
     """Get Grasshopper status"""
     try:
-        # 嘗試連接到 Grasshopper MCP
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((GRASSHOPPER_HOST, GRASSHOPPER_PORT))
-        client.close()
-        
         # 獲取文檔信息
         doc_info = send_to_grasshopper("get_document_info")
         
         # 獲取所有組件
-        components_info = send_to_grasshopper("get_all_components")
+        components = send_to_grasshopper("get_all_components")
         
         # 獲取所有連接
-        connections_info = send_to_grasshopper("get_connections")
+        connections = send_to_grasshopper("get_connections")
+        
+        # 添加常用組件的提示信息
+        component_hints = {
+            "Number Slider": {
+                "description": "Single numeric value slider with adjustable range",
+                "common_usage": "Use for single numeric inputs like radius, height, count, etc.",
+                "parameters": ["min", "max", "value", "rounding", "type"],
+                "NOT_TO_BE_CONFUSED_WITH": "MD Slider (which is for multi-dimensional values)"
+            },
+            "MD Slider": {
+                "description": "Multi-dimensional slider for vector input",
+                "common_usage": "Use for vector inputs, NOT for simple numeric values",
+                "NOT_TO_BE_CONFUSED_WITH": "Number Slider (which is for single numeric values)"
+            },
+            "Panel": {
+                "description": "Displays text or numeric data",
+                "common_usage": "Use for displaying outputs and debugging"
+            }
+        }
         
         return {
-            "status": "connected",
-            "document": doc_info.get("document", {}),
-            "components": components_info.get("components", []),
-            "connections": connections_info.get("connections", []),
-            "lastUpdated": components_info.get("timestamp", "")
+            "status": "Connected to Grasshopper",
+            "document": doc_info.get("result", {}),
+            "components": components.get("result", []),
+            "connections": connections.get("result", []),
+            "component_hints": component_hints,
+            "recommendations": [
+                "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider",
+                "For vector inputs (like 3D points), use 'MD Slider' or 'Construct Point' with multiple Number Sliders",
+                "Use 'Panel' to display outputs and debug values"
+            ]
         }
     except Exception as e:
+        print(f"Error getting Grasshopper status: {str(e)}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         return {
-            "status": "disconnected",
-            "error": str(e)
+            "status": f"Error: {str(e)}",
+            "document": {},
+            "components": [],
+            "connections": []
         }
 
 @server.resource("grasshopper://component_guide")
@@ -372,22 +416,47 @@ def get_component_guide():
             },
             {
                 "name": "Number Slider",
-                "category": "Params",
-                "description": "Creates a slider for numeric input",
+                "fullName": "Number Slider",
+                "description": "Creates a slider for numeric input with adjustable range and precision",
                 "inputs": [],
                 "outputs": [
-                    {"name": "N", "type": "Number"}
+                    {"name": "N", "type": "Number", "description": "Number output"}
                 ],
                 "settings": {
-                    "min": 0,
-                    "max": 10,
-                    "default": 5,
-                    "rounding": 0.1
+                    "min": {"description": "Minimum value of the slider", "default": 0},
+                    "max": {"description": "Maximum value of the slider", "default": 10},
+                    "value": {"description": "Current value of the slider", "default": 5},
+                    "rounding": {"description": "Rounding precision (0.01, 0.1, 1, etc.)", "default": 0.1},
+                    "type": {"description": "Slider type (integer, floating point)", "default": "float"},
+                    "name": {"description": "Custom name for the slider", "default": ""}
+                },
+                "usage_examples": [
+                    "Create a Number Slider with min=0, max=100, value=50",
+                    "Create a Number Slider for radius with min=0.1, max=10, value=2.5, rounding=0.1"
+                ],
+                "common_issues": [
+                    "Confusing with other slider types",
+                    "Not setting appropriate min/max values for the intended use"
+                ],
+                "disambiguation": {
+                    "similar_components": [
+                        {
+                            "name": "MD Slider",
+                            "description": "Multi-dimensional slider for vector input, NOT for simple numeric values",
+                            "how_to_distinguish": "Use Number Slider for single numeric values; use MD Slider only when you need multi-dimensional control"
+                        },
+                        {
+                            "name": "Graph Mapper",
+                            "description": "Maps values through a graph function, NOT a simple slider",
+                            "how_to_distinguish": "Use Number Slider for direct numeric input; use Graph Mapper only for function-based mapping"
+                        }
+                    ],
+                    "correct_usage": "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider or other variants"
                 }
             },
             {
                 "name": "Panel",
-                "category": "Params",
+                "fullName": "Panel",
                 "description": "Displays text or numeric data",
                 "inputs": [
                     {"name": "Input", "type": "Any"}
@@ -396,7 +465,7 @@ def get_component_guide():
             },
             {
                 "name": "Math",
-                "category": "Maths",
+                "fullName": "Mathematics",
                 "description": "Performs mathematical operations",
                 "inputs": [
                     {"name": "A", "type": "Number"},
@@ -409,7 +478,7 @@ def get_component_guide():
             },
             {
                 "name": "Construct Point",
-                "category": "Vector",
+                "fullName": "Construct Point",
                 "description": "Constructs a point from X, Y, Z coordinates",
                 "inputs": [
                     {"name": "X", "type": "Number"},
@@ -422,7 +491,7 @@ def get_component_guide():
             },
             {
                 "name": "Line",
-                "category": "Curve",
+                "fullName": "Line",
                 "description": "Creates a line between two points",
                 "inputs": [
                     {"name": "Start", "type": "Point"},
@@ -434,7 +503,7 @@ def get_component_guide():
             },
             {
                 "name": "Extrude",
-                "category": "Surface",
+                "fullName": "Extrude",
                 "description": "Extrudes a curve to create a surface or a solid",
                 "inputs": [
                     {"name": "Base", "type": "Curve"},
@@ -555,16 +624,41 @@ def get_component_library():
                     {
                         "name": "Number Slider",
                         "fullName": "Number Slider",
-                        "description": "Creates a slider for numeric input",
+                        "description": "Creates a slider for numeric input with adjustable range and precision",
                         "inputs": [],
                         "outputs": [
                             {"name": "N", "type": "Number", "description": "Number output"}
                         ],
                         "settings": {
-                            "min": 0,
-                            "max": 10,
-                            "default": 5,
-                            "rounding": 0.1
+                            "min": {"description": "Minimum value of the slider", "default": 0},
+                            "max": {"description": "Maximum value of the slider", "default": 10},
+                            "value": {"description": "Current value of the slider", "default": 5},
+                            "rounding": {"description": "Rounding precision (0.01, 0.1, 1, etc.)", "default": 0.1},
+                            "type": {"description": "Slider type (integer, floating point)", "default": "float"},
+                            "name": {"description": "Custom name for the slider", "default": ""}
+                        },
+                        "usage_examples": [
+                            "Create a Number Slider with min=0, max=100, value=50",
+                            "Create a Number Slider for radius with min=0.1, max=10, value=2.5, rounding=0.1"
+                        ],
+                        "common_issues": [
+                            "Confusing with other slider types",
+                            "Not setting appropriate min/max values for the intended use"
+                        ],
+                        "disambiguation": {
+                            "similar_components": [
+                                {
+                                    "name": "MD Slider",
+                                    "description": "Multi-dimensional slider for vector input, NOT for simple numeric values",
+                                    "how_to_distinguish": "Use Number Slider for single numeric values; use MD Slider only when you need multi-dimensional control"
+                                },
+                                {
+                                    "name": "Graph Mapper",
+                                    "description": "Maps values through a graph function, NOT a simple slider",
+                                    "how_to_distinguish": "Use Number Slider for direct numeric input; use Graph Mapper only for function-based mapping"
+                                }
+                            ],
+                            "correct_usage": "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider or other variants"
                         }
                     },
                     {
