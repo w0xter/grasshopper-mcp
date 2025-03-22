@@ -288,7 +288,59 @@ def get_component_info(component_id: str):
         "componentId": component_id
     }
     
-    return send_to_grasshopper("get_component_info", params)
+    result = send_to_grasshopper("get_component_info", params)
+    
+    # 增強返回結果，添加更多參數信息
+    if result and "result" in result:
+        component_data = result["result"]
+        
+        # 獲取組件類型
+        if "type" in component_data:
+            component_type = component_data["type"]
+            
+            # 查詢組件庫，獲取該類型組件的詳細參數信息
+            component_library = get_component_library()
+            if "components" in component_library:
+                for lib_component in component_library["components"]:
+                    if lib_component.get("name") == component_type or lib_component.get("fullName") == component_type:
+                        # 將組件庫中的參數信息合併到返回結果中
+                        if "settings" in lib_component:
+                            component_data["availableSettings"] = lib_component["settings"]
+                        if "inputs" in lib_component:
+                            component_data["inputDetails"] = lib_component["inputs"]
+                        if "outputs" in lib_component:
+                            component_data["outputDetails"] = lib_component["outputs"]
+                        if "usage_examples" in lib_component:
+                            component_data["usageExamples"] = lib_component["usage_examples"]
+                        if "common_issues" in lib_component:
+                            component_data["commonIssues"] = lib_component["common_issues"]
+                        break
+            
+            # 特殊處理某些組件類型
+            if component_type == "Number Slider":
+                # 嘗試從組件數據中獲取當前滑桿的實際設置
+                if "currentSettings" not in component_data:
+                    component_data["currentSettings"] = {
+                        "min": component_data.get("min", 0),
+                        "max": component_data.get("max", 10),
+                        "value": component_data.get("value", 5),
+                        "rounding": component_data.get("rounding", 0.1),
+                        "type": component_data.get("type", "float")
+                    }
+            
+            # 添加組件的連接信息
+            connections = send_to_grasshopper("get_connections")
+            if connections and "result" in connections:
+                # 查找與該組件相關的所有連接
+                related_connections = []
+                for conn in connections["result"]:
+                    if conn.get("sourceId") == component_id or conn.get("targetId") == component_id:
+                        related_connections.append(conn)
+                
+                if related_connections:
+                    component_data["connections"] = related_connections
+    
+    return result
 
 @server.tool("get_all_components")
 def get_all_components():
@@ -298,7 +350,59 @@ def get_all_components():
     Returns:
         List of all components in the document with their IDs, types, and positions
     """
-    return send_to_grasshopper("get_all_components")
+    result = send_to_grasshopper("get_all_components")
+    
+    # 增強返回結果，為每個組件添加更多參數信息
+    if result and "result" in result:
+        components = result["result"]
+        component_library = get_component_library()
+        
+        # 獲取所有連接信息
+        connections = send_to_grasshopper("get_connections")
+        connections_data = connections.get("result", []) if connections else []
+        
+        # 為每個組件添加詳細信息
+        for component in components:
+            if "id" in component and "type" in component:
+                component_id = component["id"]
+                component_type = component["type"]
+                
+                # 添加組件的詳細參數信息
+                if "components" in component_library:
+                    for lib_component in component_library["components"]:
+                        if lib_component.get("name") == component_type or lib_component.get("fullName") == component_type:
+                            # 將組件庫中的參數信息合併到組件數據中
+                            if "settings" in lib_component:
+                                component["availableSettings"] = lib_component["settings"]
+                            if "inputs" in lib_component:
+                                component["inputDetails"] = lib_component["inputs"]
+                            if "outputs" in lib_component:
+                                component["outputDetails"] = lib_component["outputs"]
+                            break
+                
+                # 添加組件的連接信息
+                related_connections = []
+                for conn in connections_data:
+                    if conn.get("sourceId") == component_id or conn.get("targetId") == component_id:
+                        related_connections.append(conn)
+                
+                if related_connections:
+                    component["connections"] = related_connections
+                
+                # 特殊處理某些組件類型
+                if component_type == "Number Slider":
+                    # 嘗試獲取滑桿的當前設置
+                    component_info = send_to_grasshopper("get_component_info", {"componentId": component_id})
+                    if component_info and "result" in component_info:
+                        info_data = component_info["result"]
+                        component["currentSettings"] = {
+                            "min": info_data.get("min", 0),
+                            "max": info_data.get("max", 10),
+                            "value": info_data.get("value", 5),
+                            "rounding": info_data.get("rounding", 0.1)
+                        }
+    
+    return result
 
 @server.tool("get_connections")
 def get_connections():
@@ -379,8 +483,9 @@ def get_grasshopper_status():
         # 獲取文檔信息
         doc_info = send_to_grasshopper("get_document_info")
         
-        # 獲取所有組件
-        components = send_to_grasshopper("get_all_components")
+        # 獲取所有組件（使用增強版的 get_all_components）
+        components_result = get_all_components()
+        components = components_result.get("result", []) if components_result else []
         
         # 獲取所有連接
         connections = send_to_grasshopper("get_connections")
@@ -401,20 +506,76 @@ def get_grasshopper_status():
             "Panel": {
                 "description": "Displays text or numeric data",
                 "common_usage": "Use for displaying outputs and debugging"
+            },
+            "Addition": {
+                "description": "Adds two or more numbers",
+                "common_usage": "Connect two Number Sliders to inputs A and B",
+                "parameters": ["A", "B"],
+                "connection_tip": "First slider should connect to input A, second to input B"
             }
         }
+        
+        # 為每個組件添加當前參數值的摘要
+        component_summaries = []
+        for component in components:
+            summary = {
+                "id": component.get("id", ""),
+                "type": component.get("type", ""),
+                "position": {
+                    "x": component.get("x", 0),
+                    "y": component.get("y", 0)
+                }
+            }
+            
+            # 添加組件特定的參數信息
+            if "currentSettings" in component:
+                summary["settings"] = component["currentSettings"]
+            elif component.get("type") == "Number Slider":
+                # 嘗試從組件信息中提取滑桿設置
+                summary["settings"] = {
+                    "min": component.get("min", 0),
+                    "max": component.get("max", 10),
+                    "value": component.get("value", 5),
+                    "rounding": component.get("rounding", 0.1)
+                }
+            
+            # 添加連接信息摘要
+            if "connections" in component:
+                conn_summary = []
+                for conn in component["connections"]:
+                    if conn.get("sourceId") == component.get("id"):
+                        conn_summary.append({
+                            "type": "output",
+                            "to": conn.get("targetId", ""),
+                            "sourceParam": conn.get("sourceParam", ""),
+                            "targetParam": conn.get("targetParam", "")
+                        })
+                    else:
+                        conn_summary.append({
+                            "type": "input",
+                            "from": conn.get("sourceId", ""),
+                            "sourceParam": conn.get("sourceParam", ""),
+                            "targetParam": conn.get("targetParam", "")
+                        })
+                
+                if conn_summary:
+                    summary["connections"] = conn_summary
+            
+            component_summaries.append(summary)
         
         return {
             "status": "Connected to Grasshopper",
             "document": doc_info.get("result", {}),
-            "components": components.get("result", []),
+            "components": component_summaries,
             "connections": connections.get("result", []),
             "component_hints": component_hints,
             "recommendations": [
                 "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider",
                 "For vector inputs (like 3D points), use 'MD Slider' or 'Construct Point' with multiple Number Sliders",
-                "Use 'Panel' to display outputs and debug values"
-            ]
+                "Use 'Panel' to display outputs and debug values",
+                "When connecting multiple sliders to Addition, first slider goes to input A, second to input B"
+            ],
+            "canvas_summary": f"Current canvas has {len(component_summaries)} components and {len(connections.get('result', []))} connections"
         }
     except Exception as e:
         print(f"Error getting Grasshopper status: {str(e)}", file=sys.stderr)
