@@ -90,14 +90,36 @@ def add_component(component_type: str, x: float, y: float):
         "md slider": "MD Slider",
         "multidimensional slider": "MD Slider",
         "multi-dimensional slider": "MD Slider",
-        "graph mapper": "Graph Mapper"
+        "graph mapper": "Graph Mapper",
+        
+        # 數學運算組件
+        "add": "Addition",
+        "addition": "Addition",
+        "plus": "Addition",
+        "sum": "Addition",
+        "subtract": "Subtraction",
+        "subtraction": "Subtraction",
+        "minus": "Subtraction",
+        "difference": "Subtraction",
+        "multiply": "Multiplication",
+        "multiplication": "Multiplication",
+        "times": "Multiplication",
+        "product": "Multiplication",
+        "divide": "Division",
+        "division": "Division",
+        
+        # 輸出組件
+        "panel": "Panel",
+        "text panel": "Panel",
+        "output panel": "Panel",
+        "display": "Panel"
     }
     
     # 檢查並修正組件類型
     normalized_type = component_type.lower()
     if normalized_type in component_mapping:
         component_type = component_mapping[normalized_type]
-        print(f"Component type normalized from '{component_type}' to '{component_mapping[normalized_type]}'", file=sys.stderr)
+        print(f"Component type normalized from '{normalized_type}' to '{component_mapping[normalized_type]}'", file=sys.stderr)
     
     params = {
         "type": component_type,
@@ -167,6 +189,39 @@ def connect_components(source_id: str, target_id: str, source_param: str = None,
     Returns:
         Result of connecting the components
     """
+    # 獲取目標組件的信息，檢查是否已有連接
+    target_info = send_to_grasshopper("get_component_info", {"componentId": target_id})
+    
+    # 檢查組件類型，如果是需要多個輸入的組件（如 Addition, Subtraction 等），智能分配輸入
+    if target_info and "result" in target_info and "type" in target_info["result"]:
+        component_type = target_info["result"]["type"]
+        
+        # 獲取現有連接
+        connections = send_to_grasshopper("get_connections")
+        existing_connections = []
+        
+        if connections and "result" in connections:
+            for conn in connections["result"]:
+                if conn.get("targetId") == target_id:
+                    existing_connections.append(conn)
+        
+        # 對於特定需要多個輸入的組件，自動選擇正確的輸入端口
+        if component_type in ["Addition", "Subtraction", "Multiplication", "Division", "Math"]:
+            # 如果沒有指定目標參數，且已有連接到第一個輸入，則自動連接到第二個輸入
+            if target_param is None and target_param_index is None:
+                # 檢查第一個輸入是否已被佔用
+                first_input_occupied = False
+                for conn in existing_connections:
+                    if conn.get("targetParam") == "A" or conn.get("targetParamIndex") == 0:
+                        first_input_occupied = True
+                        break
+                
+                # 如果第一個輸入已被佔用，則連接到第二個輸入
+                if first_input_occupied:
+                    target_param = "B"  # 第二個輸入通常命名為 B
+                else:
+                    target_param = "A"  # 否則連接到第一個輸入
+    
     params = {
         "sourceId": source_id,
         "targetId": target_id
@@ -412,6 +467,26 @@ def get_component_guide():
                 ],
                 "outputs": [
                     {"name": "Plane", "type": "Plane", "description": "XY plane"}
+                ]
+            },
+            {
+                "name": "Addition",
+                "fullName": "Addition",
+                "description": "Adds two or more numbers",
+                "inputs": [
+                    {"name": "A", "type": "Number", "description": "First input value"},
+                    {"name": "B", "type": "Number", "description": "Second input value"}
+                ],
+                "outputs": [
+                    {"name": "Result", "type": "Number", "description": "Sum of inputs"}
+                ],
+                "usage_examples": [
+                    "Connect two Number Sliders to inputs A and B to add their values",
+                    "Connect multiple values to add them all together"
+                ],
+                "common_issues": [
+                    "When connecting multiple sliders, ensure they connect to different inputs (A and B)",
+                    "The first slider should connect to input A, the second to input B"
                 ]
             },
             {
