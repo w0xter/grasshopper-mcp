@@ -354,6 +354,28 @@ def get_component_info(component_id: str):
     
     return result
 
+@server.tool("set_component_value")
+def set_component_value(component_id: str, value: str):
+    """
+    Set the value of a Grasshopper component.
+
+    This can update panel text, slider values or the first input of a
+    component by forwarding the request to the Grasshopper MCP server.
+
+    Args:
+        component_id: ID of the component to update
+        value: New value as a string
+
+    Returns:
+        Result returned by Grasshopper after applying the value
+    """
+    params = {
+        "id": component_id,
+        "value": value
+    }
+
+    return send_to_grasshopper("set_component_value", params)
+
 @server.tool("get_all_components")
 def get_all_components():
     """
