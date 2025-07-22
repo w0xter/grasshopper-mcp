@@ -575,8 +575,61 @@ def validate_connection(source_id: str, target_id: str, source_param: str = None
         
     if target_param is not None:
         params["targetParam"] = target_param
-    
+
     return send_to_grasshopper("validate_connection", params)
+
+@server.tool("execute_preview")
+def execute_preview():
+    """Force a new solution preview in Grasshopper"""
+    return send_to_grasshopper("execute_preview")
+
+@server.tool("execute_script")
+def execute_script(script: str):
+    """Execute a Rhino command script"""
+    params = {"script": script}
+    return send_to_grasshopper("execute_script", params)
+
+@server.tool("create_macro")
+def create_macro(name: str, macro: str):
+    """Store a named Rhino macro"""
+    params = {"name": name, "macro": macro}
+    return send_to_grasshopper("create_macro", params)
+
+@server.tool("run_macro")
+def run_macro(name: str = None, macro: str = None):
+    """Run a stored or inline Rhino macro"""
+    params = {}
+    if name is not None:
+        params["name"] = name
+    if macro is not None:
+        params["macro"] = macro
+    return send_to_grasshopper("run_macro", params)
+
+@server.tool("snapshot")
+def snapshot(name: str = None):
+    """Create a snapshot of the current document"""
+    params = {}
+    if name is not None:
+        params["name"] = name
+    return send_to_grasshopper("snapshot", params)
+
+@server.tool("revert_snapshot")
+def revert_snapshot(name: str):
+    """Revert to a previously created snapshot"""
+    params = {"name": name}
+    return send_to_grasshopper("revert_snapshot", params)
+
+@server.tool("get_geometry")
+def get_geometry(component_id: str):
+    """Get preview geometry data for a component"""
+    params = {"id": component_id}
+    return send_to_grasshopper("get_geometry", params)
+
+@server.tool("run_gh_python")
+def run_gh_python(script: str):
+    """Execute Python script inside Rhino"""
+    params = {"script": script}
+    return send_to_grasshopper("run_gh_python", params)
 
 # 註冊 MCP 資源
 @server.resource("grasshopper://status")

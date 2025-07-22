@@ -24,16 +24,19 @@ namespace GH_MCP.Commands
         {
             // 註冊幾何命令
             RegisterGeometryCommands();
-            
+
             // 註冊組件命令
             RegisterComponentCommands();
-            
+
             // 註冊文檔命令
             RegisterDocumentCommands();
-            
+
             // 註冊意圖命令
             RegisterIntentCommands();
-            
+
+            // 註冊工具命令
+            RegisterUtilityCommands();
+
             RhinoApp.WriteLine("GH_MCP: Command registry initialized.");
         }
 
@@ -101,11 +104,26 @@ namespace GH_MCP.Commands
         {
             // 創建模式
             RegisterCommand("create_pattern", IntentCommandHandler.CreatePattern);
-            
+
             // 獲取可用模式
             RegisterCommand("get_available_patterns", IntentCommandHandler.GetAvailablePatterns);
-            
+
             RhinoApp.WriteLine("GH_MCP: Intent commands registered.");
+        }
+
+        /// <summary>
+        /// 註冊工具命令
+        /// </summary>
+        private static void RegisterUtilityCommands()
+        {
+            RegisterCommand("execute_preview", UtilityCommandHandler.ExecutePreview);
+            RegisterCommand("execute_script", UtilityCommandHandler.ExecuteScript);
+            RegisterCommand("create_macro", UtilityCommandHandler.CreateMacro);
+            RegisterCommand("run_macro", UtilityCommandHandler.RunMacro);
+            RegisterCommand("snapshot", UtilityCommandHandler.Snapshot);
+            RegisterCommand("revert_snapshot", UtilityCommandHandler.RevertSnapshot);
+            RegisterCommand("get_geometry", UtilityCommandHandler.GetGeometry);
+            RegisterCommand("run_gh_python", UtilityCommandHandler.RunGHPython);
         }
 
         /// <summary>
