@@ -4,6 +4,7 @@ import os
 import sys
 import traceback
 from typing import Dict, Any, Optional, List
+import uuid
 
 # 使用 MCP 服務器
 from mcp.server.fastmcp import FastMCP
@@ -34,36 +35,38 @@ def load_knowledge_base() -> Dict[str, Any]:
             _knowledge_base_cache = {}
     return _knowledge_base_cache
 
-def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """向 Grasshopper MCP 發送命令"""
+def send_to_grasshopper(method: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Send a JSON-RPC request to the Grasshopper MCP server."""
     if params is None:
         params = {}
-    
-    # 創建命令
-    command = {
-        "type": command_type,
-        "parameters": params
+
+    request_id = str(uuid.uuid4())
+    request = {
+        "jsonrpc": "2.0",
+        "id": request_id,
+        "method": method,
+        "params": params,
     }
-    
+
     client = None
     try:
         print(
-            f"Sending command to Grasshopper: {command_type} with params: {params}",
+            f"Sending request to Grasshopper: {method} with params: {params}",
             file=sys.stderr,
         )
 
-        # 連接到 Grasshopper MCP，設定 5 秒連線與讀取超時
+        # Connect to Grasshopper MCP with a longer timeout
         client = socket.create_connection(
-            (GRASSHOPPER_HOST, GRASSHOPPER_PORT), timeout=5
+            (GRASSHOPPER_HOST, GRASSHOPPER_PORT), timeout=30
         )
-        client.settimeout(5)
-        
-        # 發送命令
-        command_json = json.dumps(command)
-        client.sendall((command_json + "\n").encode("utf-8"))
-        print(f"Command sent: {command_json}", file=sys.stderr)
-        
-        # 接收響應
+        client.settimeout(30)
+
+        # Send the JSON-RPC request
+        request_json = json.dumps(request)
+        client.sendall((request_json + "\n").encode("utf-8"))
+        print(f"Request sent: {request_json}", file=sys.stderr)
+
+        # Receive the response
         response_data = b""
         try:
             while True:
@@ -78,26 +81,35 @@ def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = No
         except socket.timeout:
             return {
                 "success": False,
-                "error": "Timed out waiting for response from Grasshopper"
+                "error": "Timed out waiting for response from Grasshopper",
             }
 
         if not response_data.endswith(b"\n"):
             return {
                 "success": False,
-                "error": "Incomplete response from Grasshopper"
+                "error": "Incomplete response from Grasshopper",
             }
-        
-        # 處理可能的 BOM
+
         response_str = response_data.decode("utf-8-sig").strip()
         print(f"Response received: {response_str}", file=sys.stderr)
-        
-        # 解析 JSON 響應
+
         response = json.loads(response_str)
+
+        # Unwrap JSON-RPC envelope if present
+        if isinstance(response, dict) and response.get("jsonrpc") == "2.0":
+            if "result" in response:
+                return response["result"]
+            elif "error" in response:
+                return {
+                    "success": False,
+                    "error": response.get("error"),
+                }
         return response
+
     except socket.timeout:
         return {
             "success": False,
-            "error": "Timed out communicating with Grasshopper"
+            "error": "Timed out communicating with Grasshopper",
         }
     except Exception as e:
         print(f"Error communicating with Grasshopper: {str(e)}", file=sys.stderr)
