@@ -26,12 +26,18 @@ def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = No
         "parameters": params
     }
     
+    client = None
     try:
-        print(f"Sending command to Grasshopper: {command_type} with params: {params}", file=sys.stderr)
-        
-        # 連接到 Grasshopper MCP
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((GRASSHOPPER_HOST, GRASSHOPPER_PORT))
+        print(
+            f"Sending command to Grasshopper: {command_type} with params: {params}",
+            file=sys.stderr,
+        )
+
+        # 連接到 Grasshopper MCP，設定 5 秒連線與讀取超時
+        client = socket.create_connection(
+            (GRASSHOPPER_HOST, GRASSHOPPER_PORT), timeout=5
+        )
+        client.settimeout(5)
         
         # 發送命令
         command_json = json.dumps(command)
@@ -40,13 +46,27 @@ def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = No
         
         # 接收響應
         response_data = b""
-        while True:
-            chunk = client.recv(4096)
-            if not chunk:
-                break
-            response_data += chunk
-            if response_data.endswith(b"\n"):
-                break
+        try:
+            while True:
+                chunk = client.recv(4096)
+                if not chunk:
+                    if not response_data:
+                        raise ConnectionError("Connection closed before response received")
+                    break
+                response_data += chunk
+                if response_data.endswith(b"\n"):
+                    break
+        except socket.timeout:
+            return {
+                "success": False,
+                "error": "Timed out waiting for response from Grasshopper"
+            }
+
+        if not response_data.endswith(b"\n"):
+            return {
+                "success": False,
+                "error": "Incomplete response from Grasshopper"
+            }
         
         # 處理可能的 BOM
         response_str = response_data.decode("utf-8-sig").strip()
@@ -54,8 +74,12 @@ def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = No
         
         # 解析 JSON 響應
         response = json.loads(response_str)
-        client.close()
         return response
+    except socket.timeout:
+        return {
+            "success": False,
+            "error": "Timed out communicating with Grasshopper"
+        }
     except Exception as e:
         print(f"Error communicating with Grasshopper: {str(e)}", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
@@ -63,6 +87,12 @@ def send_to_grasshopper(command_type: str, params: Optional[Dict[str, Any]] = No
             "success": False,
             "error": f"Error communicating with Grasshopper: {str(e)}"
         }
+    finally:
+        if client is not None:
+            try:
+                client.close()
+            except Exception:
+                pass
 
 # 註冊 MCP 工具
 @server.tool("add_component")
