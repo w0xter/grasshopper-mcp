@@ -594,29 +594,7 @@ def get_grasshopper_status():
         connections = send_to_grasshopper("get_connections")
         
         # 添加常用組件的提示信息
-        component_hints = {
-            "Number Slider": {
-                "description": "Single numeric value slider with adjustable range",
-                "common_usage": "Use for single numeric inputs like radius, height, count, etc.",
-                "parameters": ["min", "max", "value", "rounding", "type"],
-                "NOT_TO_BE_CONFUSED_WITH": "MD Slider (which is for multi-dimensional values)"
-            },
-            "MD Slider": {
-                "description": "Multi-dimensional slider for vector input",
-                "common_usage": "Use for vector inputs, NOT for simple numeric values",
-                "NOT_TO_BE_CONFUSED_WITH": "Number Slider (which is for single numeric values)"
-            },
-            "Panel": {
-                "description": "Displays text or numeric data",
-                "common_usage": "Use for displaying outputs and debugging"
-            },
-            "Addition": {
-                "description": "Adds two or more numbers",
-                "common_usage": "Connect two Number Sliders to inputs A and B",
-                "parameters": ["A", "B"],
-                "connection_tip": "First slider should connect to input A, second to input B"
-            }
-        }
+        component_hints = load_knowledge_base().get("componentHints", {})
         
         # 為每個組件添加當前參數值的摘要
         component_summaries = []
@@ -699,6 +677,11 @@ def get_component_guide():
 def get_component_library():
     """Get a comprehensive library of Grasshopper components"""
     return load_knowledge_base().get("componentLibrary", {})
+
+@server.resource("grasshopper://component_hints")
+def get_component_hints():
+    """Get common hints for Grasshopper components"""
+    return load_knowledge_base().get("componentHints", {})
 
 def main():
     """Main entry point for the Grasshopper MCP Bridge Server"""
