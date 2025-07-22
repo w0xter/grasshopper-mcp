@@ -65,9 +65,15 @@ namespace GH_MCP.Commands
             
             // 設置組件值
             RegisterCommand("set_component_value", ComponentCommandHandler.SetComponentValue);
-            
+
             // 獲取組件信息
             RegisterCommand("get_component_info", ComponentCommandHandler.GetComponentInfo);
+
+            // 刪除組件
+            RegisterCommand("delete_component", ComponentCommandHandler.DeleteComponent);
+
+            // 移動組件
+            RegisterCommand("move_component", ComponentCommandHandler.MoveComponent);
         }
 
         /// <summary>

@@ -145,8 +145,28 @@ def add_component(component_type: str, x: float, y: float):
         "x": x,
         "y": y
     }
-    
+
     return send_to_grasshopper("add_component", params)
+
+@server.tool("delete_component")
+def delete_component(component_id: str):
+    """Delete a component from the Grasshopper canvas"""
+    params = {
+        "id": component_id
+    }
+
+    return send_to_grasshopper("delete_component", params)
+
+@server.tool("move_component")
+def move_component(component_id: str, x: float, y: float):
+    """Move an existing component to a new canvas location"""
+    params = {
+        "id": component_id,
+        "x": x,
+        "y": y
+    }
+
+    return send_to_grasshopper("move_component", params)
 
 @server.tool("clear_document")
 def clear_document():
