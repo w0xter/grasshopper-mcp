@@ -660,6 +660,152 @@ namespace GrasshopperMCP.Commands
             
             return result;
         }
+
+        /// <summary>
+        /// 刪除組件
+        /// </summary>
+        /// <param name="command">包含組件 ID 的命令</param>
+        /// <returns>操作結果</returns>
+        public static object DeleteComponent(Command command)
+        {
+            string idStr = command.GetParameter<string>("id");
+
+            if (string.IsNullOrEmpty(idStr))
+            {
+                throw new ArgumentException("Component ID is required");
+            }
+
+            object result = null;
+            Exception exception = null;
+
+            RhinoApp.InvokeOnUiThread(new Action(() =>
+            {
+                try
+                {
+                    var doc = Grasshopper.Instances.ActiveCanvas?.Document;
+                    if (doc == null)
+                    {
+                        throw new InvalidOperationException("No active Grasshopper document");
+                    }
+
+                    Guid id;
+                    if (!Guid.TryParse(idStr, out id))
+                    {
+                        throw new ArgumentException("Invalid component ID format");
+                    }
+
+                    IGH_DocumentObject component = doc.FindObject(id, true);
+                    if (component == null)
+                    {
+                        throw new ArgumentException($"Component with ID {idStr} not found");
+                    }
+
+                    doc.RemoveObject(component, false);
+
+                    doc.NewSolution(false);
+
+                    result = new
+                    {
+                        success = true,
+                        id = idStr
+                    };
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                    RhinoApp.WriteLine($"Error in DeleteComponent: {ex.Message}");
+                }
+            }));
+
+            while (result == null && exception == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (exception != null)
+            {
+                throw exception;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 移動組件到新位置
+        /// </summary>
+        /// <param name="command">包含組件 ID 和目標位置的命令</param>
+        /// <returns>操作結果</returns>
+        public static object MoveComponent(Command command)
+        {
+            string idStr = command.GetParameter<string>("id");
+            double x = command.GetParameter<double>("x");
+            double y = command.GetParameter<double>("y");
+
+            if (string.IsNullOrEmpty(idStr))
+            {
+                throw new ArgumentException("Component ID is required");
+            }
+
+            object result = null;
+            Exception exception = null;
+
+            RhinoApp.InvokeOnUiThread(new Action(() =>
+            {
+                try
+                {
+                    var doc = Grasshopper.Instances.ActiveCanvas?.Document;
+                    if (doc == null)
+                    {
+                        throw new InvalidOperationException("No active Grasshopper document");
+                    }
+
+                    Guid id;
+                    if (!Guid.TryParse(idStr, out id))
+                    {
+                        throw new ArgumentException("Invalid component ID format");
+                    }
+
+                    IGH_DocumentObject component = doc.FindObject(id, true);
+                    if (component == null)
+                    {
+                        throw new ArgumentException($"Component with ID {idStr} not found");
+                    }
+
+                    if (component.Attributes == null)
+                    {
+                        component.CreateAttributes();
+                    }
+
+                    component.Attributes.Pivot = new System.Drawing.PointF((float)x, (float)y);
+
+                    doc.NewSolution(false);
+
+                    result = new
+                    {
+                        id = idStr,
+                        x = x,
+                        y = y
+                    };
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                    RhinoApp.WriteLine($"Error in MoveComponent: {ex.Message}");
+                }
+            }));
+
+            while (result == null && exception == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (exception != null)
+            {
+                throw exception;
+            }
+
+            return result;
+        }
         
         private static IGH_DocumentObject CreateComponentByName(string name)
         {
