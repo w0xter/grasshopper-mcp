@@ -121,7 +121,7 @@ The system consists of the following parts:
 
 5. **Start Using Grasshopper with Claude Desktop**
 
-   You can now use Claude Desktop to control Grasshopper through natural language commands.
+   You can now use Claude Desktop to control Grasshopper through natural language commands. The bridge exposes tools like `add_component`, `connect_components`, and `set_component_value` for programmatic control.
 
 ## Example Commands
 
@@ -131,6 +131,7 @@ Here are some example commands you can use with Claude Desktop:
 - "Connect the circle to a extrude component with a height of 10"
 - "Create a grid of points with 5 rows and 5 columns"
 - "Apply a random rotation to all selected objects"
+- "Update the value of a Number Slider using `set_component_value`"
 
 ## Troubleshooting
 
