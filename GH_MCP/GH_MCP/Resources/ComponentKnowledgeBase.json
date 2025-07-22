@@ -6,12 +6,28 @@
       "subcategory": "Geometry",
       "description": "Creates a point at the specified coordinates",
       "inputs": [
-        {"name": "X", "type": "Number", "description": "X coordinate"},
-        {"name": "Y", "type": "Number", "description": "Y coordinate"},
-        {"name": "Z", "type": "Number", "description": "Z coordinate"}
+        {
+          "name": "X",
+          "type": "Number",
+          "description": "X coordinate"
+        },
+        {
+          "name": "Y",
+          "type": "Number",
+          "description": "Y coordinate"
+        },
+        {
+          "name": "Z",
+          "type": "Number",
+          "description": "Z coordinate"
+        }
       ],
       "outputs": [
-        {"name": "Pt", "type": "Point", "description": "Point"}
+        {
+          "name": "Pt",
+          "type": "Point",
+          "description": "Point"
+        }
       ]
     },
     {
@@ -20,10 +36,19 @@
       "subcategory": "Plane",
       "description": "Creates an XY plane at the world origin or at a specified point",
       "inputs": [
-        {"name": "Origin", "type": "Point", "description": "Origin point", "optional": true}
+        {
+          "name": "Origin",
+          "type": "Point",
+          "description": "Origin point",
+          "optional": true
+        }
       ],
       "outputs": [
-        {"name": "Plane", "type": "Plane", "description": "XY plane"}
+        {
+          "name": "Plane",
+          "type": "Plane",
+          "description": "XY plane"
+        }
       ]
     },
     {
@@ -32,13 +57,33 @@
       "subcategory": "Primitive",
       "description": "Creates a box from a base plane and dimensions",
       "inputs": [
-        {"name": "Base", "type": "Plane", "description": "Base plane"},
-        {"name": "X Size", "type": "Number", "description": "Size in X direction"},
-        {"name": "Y Size", "type": "Number", "description": "Size in Y direction"},
-        {"name": "Z Size", "type": "Number", "description": "Size in Z direction"}
+        {
+          "name": "Base",
+          "type": "Plane",
+          "description": "Base plane"
+        },
+        {
+          "name": "X Size",
+          "type": "Number",
+          "description": "Size in X direction"
+        },
+        {
+          "name": "Y Size",
+          "type": "Number",
+          "description": "Size in Y direction"
+        },
+        {
+          "name": "Z Size",
+          "type": "Number",
+          "description": "Size in Z direction"
+        }
       ],
       "outputs": [
-        {"name": "Box", "type": "Brep", "description": "Box geometry"}
+        {
+          "name": "Box",
+          "type": "Brep",
+          "description": "Box geometry"
+        }
       ]
     },
     {
@@ -47,11 +92,23 @@
       "subcategory": "Primitive",
       "description": "Creates a circle from a plane and radius",
       "inputs": [
-        {"name": "Plane", "type": "Plane", "description": "Circle plane"},
-        {"name": "Radius", "type": "Number", "description": "Circle radius"}
+        {
+          "name": "Plane",
+          "type": "Plane",
+          "description": "Circle plane"
+        },
+        {
+          "name": "Radius",
+          "type": "Number",
+          "description": "Circle radius"
+        }
       ],
       "outputs": [
-        {"name": "Circle", "type": "Curve", "description": "Circle curve"}
+        {
+          "name": "Circle",
+          "type": "Curve",
+          "description": "Circle curve"
+        }
       ]
     },
     {
@@ -61,7 +118,11 @@
       "description": "Slider for numeric input",
       "inputs": [],
       "outputs": [
-        {"name": "Number", "type": "Number", "description": "Slider value"}
+        {
+          "name": "Number",
+          "type": "Number",
+          "description": "Slider value"
+        }
       ],
       "defaultSettings": {
         "min": 0,
@@ -75,10 +136,19 @@
       "subcategory": "Input",
       "description": "Text panel for input or output",
       "inputs": [
-        {"name": "Input", "type": "Any", "description": "Any input", "optional": true}
+        {
+          "name": "Input",
+          "type": "Any",
+          "description": "Any input",
+          "optional": true
+        }
       ],
       "outputs": [
-        {"name": "Output", "type": "Text", "description": "Panel text"}
+        {
+          "name": "Output",
+          "type": "Text",
+          "description": "Panel text"
+        }
       ]
     },
     {
@@ -87,13 +157,35 @@
       "subcategory": "Triangulation",
       "description": "Creates a Voronoi diagram from points",
       "inputs": [
-        {"name": "Points", "type": "Point", "description": "Input points"},
-        {"name": "Radius", "type": "Number", "description": "Cell radius", "optional": true},
-        {"name": "Plane", "type": "Plane", "description": "Base plane", "optional": true}
+        {
+          "name": "Points",
+          "type": "Point",
+          "description": "Input points"
+        },
+        {
+          "name": "Radius",
+          "type": "Number",
+          "description": "Cell radius",
+          "optional": true
+        },
+        {
+          "name": "Plane",
+          "type": "Plane",
+          "description": "Base plane",
+          "optional": true
+        }
       ],
       "outputs": [
-        {"name": "Cells", "type": "Curve", "description": "Voronoi cells"},
-        {"name": "Vertices", "type": "Point", "description": "Voronoi vertices"}
+        {
+          "name": "Cells",
+          "type": "Curve",
+          "description": "Voronoi cells"
+        },
+        {
+          "name": "Vertices",
+          "type": "Point",
+          "description": "Voronoi vertices"
+        }
       ]
     },
     {
@@ -102,16 +194,48 @@
       "subcategory": "Grid",
       "description": "Creates a 3D grid of points",
       "inputs": [
-        {"name": "Base", "type": "Plane", "description": "Base plane"},
-        {"name": "Size X", "type": "Number", "description": "Size in X direction"},
-        {"name": "Size Y", "type": "Number", "description": "Size in Y direction"},
-        {"name": "Size Z", "type": "Number", "description": "Size in Z direction"},
-        {"name": "Count X", "type": "Integer", "description": "Count in X direction"},
-        {"name": "Count Y", "type": "Integer", "description": "Count in Y direction"},
-        {"name": "Count Z", "type": "Integer", "description": "Count in Z direction"}
+        {
+          "name": "Base",
+          "type": "Plane",
+          "description": "Base plane"
+        },
+        {
+          "name": "Size X",
+          "type": "Number",
+          "description": "Size in X direction"
+        },
+        {
+          "name": "Size Y",
+          "type": "Number",
+          "description": "Size in Y direction"
+        },
+        {
+          "name": "Size Z",
+          "type": "Number",
+          "description": "Size in Z direction"
+        },
+        {
+          "name": "Count X",
+          "type": "Integer",
+          "description": "Count in X direction"
+        },
+        {
+          "name": "Count Y",
+          "type": "Integer",
+          "description": "Count in Y direction"
+        },
+        {
+          "name": "Count Z",
+          "type": "Integer",
+          "description": "Count in Z direction"
+        }
       ],
       "outputs": [
-        {"name": "Points", "type": "Point", "description": "3D grid of points"}
+        {
+          "name": "Points",
+          "type": "Point",
+          "description": "3D grid of points"
+        }
       ]
     },
     {
@@ -120,10 +244,18 @@
       "subcategory": "Freeform",
       "description": "Creates boundary surfaces from curves",
       "inputs": [
-        {"name": "Curves", "type": "Curve", "description": "Input curves"}
+        {
+          "name": "Curves",
+          "type": "Curve",
+          "description": "Input curves"
+        }
       ],
       "outputs": [
-        {"name": "Surfaces", "type": "Surface", "description": "Boundary surfaces"}
+        {
+          "name": "Surfaces",
+          "type": "Surface",
+          "description": "Boundary surfaces"
+        }
       ]
     },
     {
@@ -132,12 +264,28 @@
       "subcategory": "Freeform",
       "description": "Extrudes curves or surfaces",
       "inputs": [
-        {"name": "Base", "type": "Geometry", "description": "Base geometry"},
-        {"name": "Direction", "type": "Vector", "description": "Extrusion direction"},
-        {"name": "Distance", "type": "Number", "description": "Extrusion distance"}
+        {
+          "name": "Base",
+          "type": "Geometry",
+          "description": "Base geometry"
+        },
+        {
+          "name": "Direction",
+          "type": "Vector",
+          "description": "Extrusion direction"
+        },
+        {
+          "name": "Distance",
+          "type": "Number",
+          "description": "Extrusion distance"
+        }
       ],
       "outputs": [
-        {"name": "Result", "type": "Brep", "description": "Extruded geometry"}
+        {
+          "name": "Result",
+          "type": "Brep",
+          "description": "Extruded geometry"
+        }
       ]
     }
   ],
@@ -146,70 +294,1014 @@
       "name": "3D Box",
       "description": "Creates a simple 3D box",
       "components": [
-        {"type": "XY Plane", "x": 100, "y": 100, "id": "plane"},
-        {"type": "Number Slider", "x": 100, "y": 200, "id": "sliderX", "settings": {"min": 0, "max": 50, "value": 20}},
-        {"type": "Number Slider", "x": 100, "y": 250, "id": "sliderY", "settings": {"min": 0, "max": 50, "value": 20}},
-        {"type": "Number Slider", "x": 100, "y": 300, "id": "sliderZ", "settings": {"min": 0, "max": 50, "value": 20}},
-        {"type": "Box", "x": 400, "y": 200, "id": "box"}
+        {
+          "type": "XY Plane",
+          "x": 100,
+          "y": 100,
+          "id": "plane"
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 200,
+          "id": "sliderX",
+          "settings": {
+            "min": 0,
+            "max": 50,
+            "value": 20
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 250,
+          "id": "sliderY",
+          "settings": {
+            "min": 0,
+            "max": 50,
+            "value": 20
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 300,
+          "id": "sliderZ",
+          "settings": {
+            "min": 0,
+            "max": 50,
+            "value": 20
+          }
+        },
+        {
+          "type": "Box",
+          "x": 400,
+          "y": 200,
+          "id": "box"
+        }
       ],
       "connections": [
-        {"source": "plane", "sourceParam": "Plane", "target": "box", "targetParam": "Base"},
-        {"source": "sliderX", "sourceParam": "Number", "target": "box", "targetParam": "X Size"},
-        {"source": "sliderY", "sourceParam": "Number", "target": "box", "targetParam": "Y Size"},
-        {"source": "sliderZ", "sourceParam": "Number", "target": "box", "targetParam": "Z Size"}
+        {
+          "source": "plane",
+          "sourceParam": "Plane",
+          "target": "box",
+          "targetParam": "Base"
+        },
+        {
+          "source": "sliderX",
+          "sourceParam": "Number",
+          "target": "box",
+          "targetParam": "X Size"
+        },
+        {
+          "source": "sliderY",
+          "sourceParam": "Number",
+          "target": "box",
+          "targetParam": "Y Size"
+        },
+        {
+          "source": "sliderZ",
+          "sourceParam": "Number",
+          "target": "box",
+          "targetParam": "Z Size"
+        }
       ]
     },
     {
       "name": "3D Voronoi",
       "description": "Creates a 3D Voronoi pattern within a box",
       "components": [
-        {"type": "XY Plane", "x": 100, "y": 100, "id": "plane"},
-        {"type": "Number Slider", "x": 100, "y": 200, "id": "sizeX", "settings": {"min": 0, "max": 100, "value": 50}},
-        {"type": "Number Slider", "x": 100, "y": 250, "id": "sizeY", "settings": {"min": 0, "max": 100, "value": 50}},
-        {"type": "Number Slider", "x": 100, "y": 300, "id": "sizeZ", "settings": {"min": 0, "max": 100, "value": 50}},
-        {"type": "Number Slider", "x": 100, "y": 350, "id": "countX", "settings": {"min": 1, "max": 20, "value": 10}},
-        {"type": "Number Slider", "x": 100, "y": 400, "id": "countY", "settings": {"min": 1, "max": 20, "value": 10}},
-        {"type": "Number Slider", "x": 100, "y": 450, "id": "countZ", "settings": {"min": 1, "max": 20, "value": 10}},
-        {"type": "Populate 3D", "x": 400, "y": 250, "id": "populate"},
-        {"type": "Voronoi", "x": 600, "y": 250, "id": "voronoi"}
+        {
+          "type": "XY Plane",
+          "x": 100,
+          "y": 100,
+          "id": "plane"
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 200,
+          "id": "sizeX",
+          "settings": {
+            "min": 0,
+            "max": 100,
+            "value": 50
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 250,
+          "id": "sizeY",
+          "settings": {
+            "min": 0,
+            "max": 100,
+            "value": 50
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 300,
+          "id": "sizeZ",
+          "settings": {
+            "min": 0,
+            "max": 100,
+            "value": 50
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 350,
+          "id": "countX",
+          "settings": {
+            "min": 1,
+            "max": 20,
+            "value": 10
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 400,
+          "id": "countY",
+          "settings": {
+            "min": 1,
+            "max": 20,
+            "value": 10
+          }
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 450,
+          "id": "countZ",
+          "settings": {
+            "min": 1,
+            "max": 20,
+            "value": 10
+          }
+        },
+        {
+          "type": "Populate 3D",
+          "x": 400,
+          "y": 250,
+          "id": "populate"
+        },
+        {
+          "type": "Voronoi",
+          "x": 600,
+          "y": 250,
+          "id": "voronoi"
+        }
       ],
       "connections": [
-        {"source": "plane", "sourceParam": "Plane", "target": "populate", "targetParam": "Base"},
-        {"source": "sizeX", "sourceParam": "Number", "target": "populate", "targetParam": "Size X"},
-        {"source": "sizeY", "sourceParam": "Number", "target": "populate", "targetParam": "Size Y"},
-        {"source": "sizeZ", "sourceParam": "Number", "target": "populate", "targetParam": "Size Z"},
-        {"source": "countX", "sourceParam": "Number", "target": "populate", "targetParam": "Count X"},
-        {"source": "countY", "sourceParam": "Number", "target": "populate", "targetParam": "Count Y"},
-        {"source": "countZ", "sourceParam": "Number", "target": "populate", "targetParam": "Count Z"},
-        {"source": "populate", "sourceParam": "Points", "target": "voronoi", "targetParam": "Points"}
+        {
+          "source": "plane",
+          "sourceParam": "Plane",
+          "target": "populate",
+          "targetParam": "Base"
+        },
+        {
+          "source": "sizeX",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Size X"
+        },
+        {
+          "source": "sizeY",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Size Y"
+        },
+        {
+          "source": "sizeZ",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Size Z"
+        },
+        {
+          "source": "countX",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Count X"
+        },
+        {
+          "source": "countY",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Count Y"
+        },
+        {
+          "source": "countZ",
+          "sourceParam": "Number",
+          "target": "populate",
+          "targetParam": "Count Z"
+        },
+        {
+          "source": "populate",
+          "sourceParam": "Points",
+          "target": "voronoi",
+          "targetParam": "Points"
+        }
       ]
     },
     {
       "name": "Circle",
       "description": "Creates a simple circle",
       "components": [
-        {"type": "XY Plane", "x": 100, "y": 100, "id": "plane"},
-        {"type": "Number Slider", "x": 100, "y": 200, "id": "radius", "settings": {"min": 0, "max": 50, "value": 10}},
-        {"type": "Circle", "x": 400, "y": 150, "id": "circle"}
+        {
+          "type": "XY Plane",
+          "x": 100,
+          "y": 100,
+          "id": "plane"
+        },
+        {
+          "type": "Number Slider",
+          "x": 100,
+          "y": 200,
+          "id": "radius",
+          "settings": {
+            "min": 0,
+            "max": 50,
+            "value": 10
+          }
+        },
+        {
+          "type": "Circle",
+          "x": 400,
+          "y": 150,
+          "id": "circle"
+        }
       ],
       "connections": [
-        {"source": "plane", "sourceParam": "Plane", "target": "circle", "targetParam": "Plane"},
-        {"source": "radius", "sourceParam": "Number", "target": "circle", "targetParam": "Radius"}
+        {
+          "source": "plane",
+          "sourceParam": "Plane",
+          "target": "circle",
+          "targetParam": "Plane"
+        },
+        {
+          "source": "radius",
+          "sourceParam": "Number",
+          "target": "circle",
+          "targetParam": "Radius"
+        }
       ]
     }
   ],
   "intents": [
     {
-      "keywords": ["box", "cube", "rectangular", "prism"],
+      "keywords": [
+        "box",
+        "cube",
+        "rectangular",
+        "prism"
+      ],
       "pattern": "3D Box"
     },
     {
-      "keywords": ["voronoi", "cell", "diagram", "3d", "cellular"],
+      "keywords": [
+        "voronoi",
+        "cell",
+        "diagram",
+        "3d",
+        "cellular"
+      ],
       "pattern": "3D Voronoi"
     },
     {
-      "keywords": ["circle", "round", "disc"],
+      "keywords": [
+        "circle",
+        "round",
+        "disc"
+      ],
       "pattern": "Circle"
     }
-  ]
+  ],
+  "componentGuide": {
+    "title": "Grasshopper Component Guide",
+    "description": "Guide for creating and connecting Grasshopper components",
+    "components": [
+      {
+        "name": "Point",
+        "category": "Params",
+        "description": "Creates a point at specific coordinates",
+        "inputs": [
+          {
+            "name": "X",
+            "type": "Number"
+          },
+          {
+            "name": "Y",
+            "type": "Number"
+          },
+          {
+            "name": "Z",
+            "type": "Number"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Pt",
+            "type": "Point"
+          }
+        ]
+      },
+      {
+        "name": "Circle",
+        "category": "Curve",
+        "description": "Creates a circle",
+        "inputs": [
+          {
+            "name": "Plane",
+            "type": "Plane",
+            "description": "Base plane for the circle"
+          },
+          {
+            "name": "Radius",
+            "type": "Number",
+            "description": "Circle radius"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "C",
+            "type": "Circle"
+          }
+        ]
+      },
+      {
+        "name": "XY Plane",
+        "category": "Vector",
+        "description": "Creates an XY plane at the world origin or at a specified point",
+        "inputs": [
+          {
+            "name": "Origin",
+            "type": "Point",
+            "description": "Origin point",
+            "optional": true
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Plane",
+            "type": "Plane",
+            "description": "XY plane"
+          }
+        ]
+      },
+      {
+        "name": "Addition",
+        "fullName": "Addition",
+        "description": "Adds two or more numbers",
+        "inputs": [
+          {
+            "name": "A",
+            "type": "Number",
+            "description": "First input value"
+          },
+          {
+            "name": "B",
+            "type": "Number",
+            "description": "Second input value"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Result",
+            "type": "Number",
+            "description": "Sum of inputs"
+          }
+        ],
+        "usage_examples": [
+          "Connect two Number Sliders to inputs A and B to add their values",
+          "Connect multiple values to add them all together"
+        ],
+        "common_issues": [
+          "When connecting multiple sliders, ensure they connect to different inputs (A and B)",
+          "The first slider should connect to input A, the second to input B"
+        ]
+      },
+      {
+        "name": "Number Slider",
+        "fullName": "Number Slider",
+        "description": "Creates a slider for numeric input with adjustable range and precision",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "N",
+            "type": "Number",
+            "description": "Number output"
+          }
+        ],
+        "settings": {
+          "min": {
+            "description": "Minimum value of the slider",
+            "default": 0
+          },
+          "max": {
+            "description": "Maximum value of the slider",
+            "default": 10
+          },
+          "value": {
+            "description": "Current value of the slider",
+            "default": 5
+          },
+          "rounding": {
+            "description": "Rounding precision (0.01, 0.1, 1, etc.)",
+            "default": 0.1
+          },
+          "type": {
+            "description": "Slider type (integer, floating point)",
+            "default": "float"
+          },
+          "name": {
+            "description": "Custom name for the slider",
+            "default": ""
+          }
+        },
+        "usage_examples": [
+          "Create a Number Slider with min=0, max=100, value=50",
+          "Create a Number Slider for radius with min=0.1, max=10, value=2.5, rounding=0.1"
+        ],
+        "common_issues": [
+          "Confusing with other slider types",
+          "Not setting appropriate min/max values for the intended use"
+        ],
+        "disambiguation": {
+          "similar_components": [
+            {
+              "name": "MD Slider",
+              "description": "Multi-dimensional slider for vector input, NOT for simple numeric values",
+              "how_to_distinguish": "Use Number Slider for single numeric values; use MD Slider only when you need multi-dimensional control"
+            },
+            {
+              "name": "Graph Mapper",
+              "description": "Maps values through a graph function, NOT a simple slider",
+              "how_to_distinguish": "Use Number Slider for direct numeric input; use Graph Mapper only for function-based mapping"
+            }
+          ],
+          "correct_usage": "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider or other variants"
+        }
+      },
+      {
+        "name": "Panel",
+        "fullName": "Panel",
+        "description": "Displays text or numeric data",
+        "inputs": [
+          {
+            "name": "Input",
+            "type": "Any"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "name": "Math",
+        "fullName": "Mathematics",
+        "description": "Performs mathematical operations",
+        "inputs": [
+          {
+            "name": "A",
+            "type": "Number"
+          },
+          {
+            "name": "B",
+            "type": "Number"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Result",
+            "type": "Number"
+          }
+        ],
+        "operations": [
+          "Addition",
+          "Subtraction",
+          "Multiplication",
+          "Division",
+          "Power",
+          "Modulo"
+        ]
+      },
+      {
+        "name": "Construct Point",
+        "fullName": "Construct Point",
+        "description": "Constructs a point from X, Y, Z coordinates",
+        "inputs": [
+          {
+            "name": "X",
+            "type": "Number"
+          },
+          {
+            "name": "Y",
+            "type": "Number"
+          },
+          {
+            "name": "Z",
+            "type": "Number"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Pt",
+            "type": "Point"
+          }
+        ]
+      },
+      {
+        "name": "Line",
+        "fullName": "Line",
+        "description": "Creates a line between two points",
+        "inputs": [
+          {
+            "name": "Start",
+            "type": "Point"
+          },
+          {
+            "name": "End",
+            "type": "Point"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "L",
+            "type": "Line"
+          }
+        ]
+      },
+      {
+        "name": "Extrude",
+        "fullName": "Extrude",
+        "description": "Extrudes a curve to create a surface or a solid",
+        "inputs": [
+          {
+            "name": "Base",
+            "type": "Curve"
+          },
+          {
+            "name": "Direction",
+            "type": "Vector"
+          },
+          {
+            "name": "Height",
+            "type": "Number"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Brep",
+            "type": "Brep"
+          }
+        ]
+      }
+    ],
+    "connectionRules": [
+      {
+        "from": "Number",
+        "to": "Circle.Radius",
+        "description": "Connect a number to the radius input of a circle"
+      },
+      {
+        "from": "Point",
+        "to": "Circle.Plane",
+        "description": "Connect a point to the plane input of a circle (not recommended, use XY Plane instead)"
+      },
+      {
+        "from": "XY Plane",
+        "to": "Circle.Plane",
+        "description": "Connect an XY Plane to the plane input of a circle (recommended)"
+      },
+      {
+        "from": "Number",
+        "to": "Math.A",
+        "description": "Connect a number to the first input of a Math component"
+      },
+      {
+        "from": "Number",
+        "to": "Math.B",
+        "description": "Connect a number to the second input of a Math component"
+      },
+      {
+        "from": "Number",
+        "to": "Construct Point.X",
+        "description": "Connect a number to the X input of a Construct Point component"
+      },
+      {
+        "from": "Number",
+        "to": "Construct Point.Y",
+        "description": "Connect a number to the Y input of a Construct Point component"
+      },
+      {
+        "from": "Number",
+        "to": "Construct Point.Z",
+        "description": "Connect a number to the Z input of a Construct Point component"
+      },
+      {
+        "from": "Point",
+        "to": "Line.Start",
+        "description": "Connect a point to the start input of a Line component"
+      },
+      {
+        "from": "Point",
+        "to": "Line.End",
+        "description": "Connect a point to the end input of a Line component"
+      },
+      {
+        "from": "Circle",
+        "to": "Extrude.Base",
+        "description": "Connect a circle to the base input of an Extrude component"
+      },
+      {
+        "from": "Number",
+        "to": "Extrude.Height",
+        "description": "Connect a number to the height input of an Extrude component"
+      }
+    ],
+    "commonIssues": [
+      "Using Point component instead of XY Plane for inputs that require planes",
+      "Not specifying parameter names when connecting components",
+      "Using incorrect component names (e.g., 'addition' instead of 'Math' with Addition operation)",
+      "Trying to connect incompatible data types",
+      "Not providing all required inputs for a component",
+      "Using incorrect parameter names (e.g., 'A' and 'B' for Math component instead of the actual parameter names)",
+      "Not checking if a connection was successful before proceeding"
+    ],
+    "tips": [
+      "Always use XY Plane component for plane inputs",
+      "Specify parameter names when connecting components",
+      "For Circle components, make sure to use the correct inputs (Plane and Radius)",
+      "Test simple connections before creating complex geometry",
+      "Avoid using components that require selection from Rhino",
+      "Use get_component_info to check the actual parameter names of a component",
+      "Use get_connections to verify if connections were established correctly",
+      "Use search_components to find the correct component name before adding it",
+      "Use validate_connection to check if a connection is possible before attempting it"
+    ]
+  },
+  "componentLibrary": {
+    "categories": [
+      {
+        "name": "Params",
+        "components": [
+          {
+            "name": "Point",
+            "fullName": "Point Parameter",
+            "description": "Creates a point parameter",
+            "inputs": [
+              {
+                "name": "X",
+                "type": "Number",
+                "description": "X coordinate"
+              },
+              {
+                "name": "Y",
+                "type": "Number",
+                "description": "Y coordinate"
+              },
+              {
+                "name": "Z",
+                "type": "Number",
+                "description": "Z coordinate"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "Pt",
+                "type": "Point",
+                "description": "Point output"
+              }
+            ]
+          },
+          {
+            "name": "Number Slider",
+            "fullName": "Number Slider",
+            "description": "Creates a slider for numeric input with adjustable range and precision",
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "N",
+                "type": "Number",
+                "description": "Number output"
+              }
+            ],
+            "settings": {
+              "min": {
+                "description": "Minimum value of the slider",
+                "default": 0
+              },
+              "max": {
+                "description": "Maximum value of the slider",
+                "default": 10
+              },
+              "value": {
+                "description": "Current value of the slider",
+                "default": 5
+              },
+              "rounding": {
+                "description": "Rounding precision (0.01, 0.1, 1, etc.)",
+                "default": 0.1
+              },
+              "type": {
+                "description": "Slider type (integer, floating point)",
+                "default": "float"
+              },
+              "name": {
+                "description": "Custom name for the slider",
+                "default": ""
+              }
+            },
+            "usage_examples": [
+              "Create a Number Slider with min=0, max=100, value=50",
+              "Create a Number Slider for radius with min=0.1, max=10, value=2.5, rounding=0.1"
+            ],
+            "common_issues": [
+              "Confusing with other slider types",
+              "Not setting appropriate min/max values for the intended use"
+            ],
+            "disambiguation": {
+              "similar_components": [
+                {
+                  "name": "MD Slider",
+                  "description": "Multi-dimensional slider for vector input, NOT for simple numeric values",
+                  "how_to_distinguish": "Use Number Slider for single numeric values; use MD Slider only when you need multi-dimensional control"
+                },
+                {
+                  "name": "Graph Mapper",
+                  "description": "Maps values through a graph function, NOT a simple slider",
+                  "how_to_distinguish": "Use Number Slider for direct numeric input; use Graph Mapper only for function-based mapping"
+                }
+              ],
+              "correct_usage": "When needing a simple numeric input control, ALWAYS use 'Number Slider', not MD Slider or other variants"
+            }
+          },
+          {
+            "name": "Panel",
+            "fullName": "Panel",
+            "description": "Displays text or numeric data",
+            "inputs": [
+              {
+                "name": "Input",
+                "type": "Any",
+                "description": "Any input data"
+              }
+            ],
+            "outputs": []
+          }
+        ]
+      },
+      {
+        "name": "Maths",
+        "components": [
+          {
+            "name": "Math",
+            "fullName": "Mathematics",
+            "description": "Performs mathematical operations",
+            "inputs": [
+              {
+                "name": "A",
+                "type": "Number",
+                "description": "First number"
+              },
+              {
+                "name": "B",
+                "type": "Number",
+                "description": "Second number"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "Result",
+                "type": "Number",
+                "description": "Result of the operation"
+              }
+            ],
+            "operations": [
+              "Addition",
+              "Subtraction",
+              "Multiplication",
+              "Division",
+              "Power",
+              "Modulo"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Vector",
+        "components": [
+          {
+            "name": "XY Plane",
+            "fullName": "XY Plane",
+            "description": "Creates an XY plane at the world origin or at a specified point",
+            "inputs": [
+              {
+                "name": "Origin",
+                "type": "Point",
+                "description": "Origin point",
+                "optional": true
+              }
+            ],
+            "outputs": [
+              {
+                "name": "Plane",
+                "type": "Plane",
+                "description": "XY plane"
+              }
+            ]
+          },
+          {
+            "name": "Construct Point",
+            "fullName": "Construct Point",
+            "description": "Constructs a point from X, Y, Z coordinates",
+            "inputs": [
+              {
+                "name": "X",
+                "type": "Number",
+                "description": "X coordinate"
+              },
+              {
+                "name": "Y",
+                "type": "Number",
+                "description": "Y coordinate"
+              },
+              {
+                "name": "Z",
+                "type": "Number",
+                "description": "Z coordinate"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "Pt",
+                "type": "Point",
+                "description": "Constructed point"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Curve",
+        "components": [
+          {
+            "name": "Circle",
+            "fullName": "Circle",
+            "description": "Creates a circle",
+            "inputs": [
+              {
+                "name": "Plane",
+                "type": "Plane",
+                "description": "Base plane for the circle"
+              },
+              {
+                "name": "Radius",
+                "type": "Number",
+                "description": "Circle radius"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "C",
+                "type": "Circle",
+                "description": "Circle output"
+              }
+            ]
+          },
+          {
+            "name": "Line",
+            "fullName": "Line",
+            "description": "Creates a line between two points",
+            "inputs": [
+              {
+                "name": "Start",
+                "type": "Point",
+                "description": "Start point"
+              },
+              {
+                "name": "End",
+                "type": "Point",
+                "description": "End point"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "L",
+                "type": "Line",
+                "description": "Line output"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Surface",
+        "components": [
+          {
+            "name": "Extrude",
+            "fullName": "Extrude",
+            "description": "Extrudes a curve to create a surface or a solid",
+            "inputs": [
+              {
+                "name": "Base",
+                "type": "Curve",
+                "description": "Base curve to extrude"
+              },
+              {
+                "name": "Direction",
+                "type": "Vector",
+                "description": "Direction of extrusion",
+                "optional": true
+              },
+              {
+                "name": "Height",
+                "type": "Number",
+                "description": "Height of extrusion"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "Brep",
+                "type": "Brep",
+                "description": "Extruded brep"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "dataTypes": [
+      {
+        "name": "Number",
+        "description": "A numeric value",
+        "compatibleWith": [
+          "Number",
+          "Integer",
+          "Double"
+        ]
+      },
+      {
+        "name": "Point",
+        "description": "A 3D point in space",
+        "compatibleWith": [
+          "Point3d",
+          "Point"
+        ]
+      },
+      {
+        "name": "Vector",
+        "description": "A 3D vector",
+        "compatibleWith": [
+          "Vector3d",
+          "Vector"
+        ]
+      },
+      {
+        "name": "Plane",
+        "description": "A plane in 3D space",
+        "compatibleWith": [
+          "Plane"
+        ]
+      },
+      {
+        "name": "Circle",
+        "description": "A circle curve",
+        "compatibleWith": [
+          "Circle",
+          "Curve"
+        ]
+      },
+      {
+        "name": "Line",
+        "description": "A line segment",
+        "compatibleWith": [
+          "Line",
+          "Curve"
+        ]
+      },
+      {
+        "name": "Curve",
+        "description": "A curve object",
+        "compatibleWith": [
+          "Curve",
+          "Circle",
+          "Line",
+          "Arc",
+          "Polyline"
+        ]
+      },
+      {
+        "name": "Brep",
+        "description": "A boundary representation object",
+        "compatibleWith": [
+          "Brep",
+          "Surface",
+          "Solid"
+        ]
+      }
+    ]
+  }
 }
