@@ -181,13 +181,58 @@ namespace GrasshopperMCP.Commands
             {
                 throw new ArgumentException("Save path is required");
             }
-            
-            // 返回一個錯誤信息，表示該功能暫時不可用
-            return new
+
+            object result = null;
+            Exception exception = null;
+
+            // 在 UI 線程上執行
+            RhinoApp.InvokeOnUiThread(new Action(() =>
             {
-                success = false,
-                message = "SaveDocument is temporarily disabled due to API compatibility issues. Please save the document manually."
-            };
+                try
+                {
+                    var doc = Grasshopper.Instances.ActiveCanvas?.Document;
+                    if (doc == null)
+                    {
+                        throw new InvalidOperationException("No active Grasshopper document");
+                    }
+
+                    var io = new GH_DocumentIO(doc);
+                    bool saved = io.Save(path);
+                    if (!saved)
+                    {
+                        throw new InvalidOperationException("Failed to save document");
+                    }
+
+                    result = new
+                    {
+                        success = true,
+                        message = "Document saved successfully",
+                        path
+                    };
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                    RhinoApp.WriteLine($"Error in SaveDocument: {ex.Message}");
+                }
+            }));
+
+            // 等待 UI 線程操作完成
+            while (result == null && exception == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (exception != null)
+            {
+                return new
+                {
+                    success = false,
+                    message = exception.Message
+                };
+            }
+
+            return result;
         }
         
         /// <summary>
@@ -202,13 +247,66 @@ namespace GrasshopperMCP.Commands
             {
                 throw new ArgumentException("Load path is required");
             }
-            
-            // 返回一個錯誤信息，表示該功能暫時不可用
-            return new
+
+            object result = null;
+            Exception exception = null;
+
+            // 在 UI 線程上執行
+            RhinoApp.InvokeOnUiThread(new Action(() =>
             {
-                success = false,
-                message = "LoadDocument is temporarily disabled due to API compatibility issues. Please load the document manually."
-            };
+                try
+                {
+                    if (!File.Exists(path))
+                    {
+                        throw new FileNotFoundException("File not found", path);
+                    }
+
+                    var io = new GH_DocumentIO();
+                    bool opened = io.Open(path);
+                    if (!opened || io.Document == null)
+                    {
+                        throw new InvalidOperationException("Failed to load document");
+                    }
+
+                    var canvas = Grasshopper.Instances.ActiveCanvas;
+                    if (canvas == null)
+                    {
+                        throw new InvalidOperationException("No active Grasshopper canvas");
+                    }
+
+                    canvas.Document = io.Document;
+                    canvas.Document.NewSolution(false);
+
+                    result = new
+                    {
+                        success = true,
+                        message = "Document loaded successfully",
+                        path
+                    };
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                    RhinoApp.WriteLine($"Error in LoadDocument: {ex.Message}");
+                }
+            }));
+
+            // 等待 UI 線程操作完成
+            while (result == null && exception == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (exception != null)
+            {
+                return new
+                {
+                    success = false,
+                    message = exception.Message
+                };
+            }
+
+            return result;
         }
     }
 }

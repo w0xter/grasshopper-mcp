@@ -148,8 +148,14 @@ def save_document(path: str):
     params = {
         "path": path
     }
-    
-    return send_to_grasshopper("save_document", params)
+
+    response = send_to_grasshopper("save_document", params)
+
+    if not response.get("success", False):
+        error_msg = response.get("error") or response.get("message", "Unknown error")
+        raise RuntimeError(f"Failed to save document: {error_msg}")
+
+    return response.get("result") or response.get("data") or response
 
 @server.tool("load_document")
 def load_document(path: str):
@@ -165,8 +171,14 @@ def load_document(path: str):
     params = {
         "path": path
     }
-    
-    return send_to_grasshopper("load_document", params)
+
+    response = send_to_grasshopper("load_document", params)
+
+    if not response.get("success", False):
+        error_msg = response.get("error") or response.get("message", "Unknown error")
+        raise RuntimeError(f"Failed to load document: {error_msg}")
+
+    return response.get("result") or response.get("data") or response
 
 @server.tool("get_document_info")
 def get_document_info():
